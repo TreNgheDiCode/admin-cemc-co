@@ -1,6 +1,11 @@
 import { SignIn } from "@clerk/nextjs";
 import Image from "next/image";
 
+export const metadata = {
+  title: "Đăng nhập | CEMC Co,. Ltd",
+  description: "Đăng nhập sử dụng tài khoản của bạn",
+};
+
 const LoginPage = () => {
   return (
     <>

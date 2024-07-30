@@ -54,7 +54,6 @@ export const CreateSchoolLocation = ({
   return (
     <>
       {fields.map((field, index) => {
-        console.log(getValue(`locations.${index}.images`));
         return (
           <Accordion
             key={field.id}

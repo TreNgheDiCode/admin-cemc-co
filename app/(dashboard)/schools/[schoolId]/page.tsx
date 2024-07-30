@@ -2,6 +2,7 @@ import { Navbar } from "@/components/navbar";
 import { SchoolInformation } from "@/components/schools/school-information";
 import { SchoolTabs } from "@/components/schools/school-tabs";
 import { GetSchoolInformation, GetSchools } from "@/data/schools";
+import { cn } from "@/lib/utils";
 import { redirect } from "next/navigation";
 
 export const metadata = {
@@ -92,7 +93,12 @@ const SchoolIdPage = async ({ params }: Props) => {
           </p>
         </div>
       )}
-      <div className="size-full [perspective:1000px] relative b flex flex-col mx-auto items-start justify-star">
+      <div
+        className={cn(
+          "size-full [perspective:1000px] relative b flex flex-col mx-auto items-start justify-star",
+          school.isPublished && "pt-20"
+        )}
+      >
         <SchoolTabs tabs={tabs} />
       </div>
     </>

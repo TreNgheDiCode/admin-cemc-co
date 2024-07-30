@@ -4,19 +4,26 @@ const isPublicRoutes = createRouteMatcher([
   "/login(.*)",
   "/api(.*)",
   "/socket.io(.*)",
+  "/firebase-messaging-sw.js(.*)",
 ]);
 
-export default clerkMiddleware((auth, req) => {
-  const { protect, userId, redirectToSignIn } = auth();
-  const role = auth().sessionClaims?.metadata.role;
-  if (userId) {
-    if (role !== "ADMIN") {
-      return auth().redirectToSignIn();
+export default clerkMiddleware(
+  (auth, req) => {
+    const { protect, userId, redirectToSignIn } = auth();
+    const role = auth().sessionClaims?.metadata.role;
+    if (userId) {
+      if (role !== "ADMIN") {
+        return redirectToSignIn();
+      }
     }
-  }
 
-  if (!isPublicRoutes(req)) protect();
-});
+    if (!isPublicRoutes(req)) protect();
+  },
+  {
+    debug: true,
+    clockSkewInMs: 30000,
+  }
+);
 
 export const config = {
   // Protects all routes, including api/trpc.

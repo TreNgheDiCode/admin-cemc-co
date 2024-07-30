@@ -7,6 +7,18 @@ import {
   SchoolInformationSchema,
 } from "@/data/form-schema";
 import { db } from "@/lib/db";
+import admin from "firebase-admin";
+import { SendGeneralNotifications } from "./notification";
+
+// Initialize Firebase Admin SDK
+if (!admin.apps.length) {
+  const serviceAccount = JSON.parse(
+    process.env.FIREBASE_SERVICE_ACCOUNT_KEY as string
+  );
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+}
 
 export const CreateSchool = async (values: CreateSchoolFormValues) => {
   try {
@@ -258,6 +270,14 @@ export const UpdateSchoolInformation = async (
         ...validatedValues.data,
       },
     });
+
+    if (validatedValues.data.isPublished) {
+      await SendGeneralNotifications(
+        `${existingSchool.name}`,
+        `Chào mừng ${existingSchool.name} gia nhập CEMC Co,. Ltd`,
+        `/schools/${id}`
+      );
+    }
 
     return { success: "Cập nhật thông tin trường học thành công" };
   } catch (error) {

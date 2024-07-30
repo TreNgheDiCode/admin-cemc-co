@@ -119,13 +119,26 @@ model VerificationToken {
 }
 
 model NotificationToken {
-  id    String @id @default(cuid())
-  email String
-  token String @unique
+  id     String @id @default(cuid())
+  userId String @unique
+  token  String
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
 
-  @@unique([email, token])
+model NotificationPush {
+  id         String  @id @default(cuid())
+  title      String
+  body       String
+  type       String
+  senderName String
+  isRead     Boolean @default(false)
+
+  receiverId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model PasswordResetToken {
