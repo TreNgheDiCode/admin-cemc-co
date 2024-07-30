@@ -76,8 +76,6 @@ export const CreateSchoolForm = () => {
         // Call API to create school
         const data = validatedFields.data;
 
-        console.log(JSON.stringify(data));
-
         setLoading(true);
 
         try {

@@ -1,27 +1,13 @@
 "use client";
-import {
-  ChatBotPlus,
-  Sidebar,
-  SidebarBody,
-  SidebarItem,
-  SidebarLink,
-} from "@/components/ui/sidebar";
-import { navItems } from "@/data/nav-items";
+import { ChatBotPlus, Sidebar, SidebarBody } from "@/components/ui/sidebar";
 
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "./ui/accordion";
 
 export function ChatBotSidebar() {
   const [open, setOpen] = useState(false);
-  const items = navItems;
 
   return (
     <Sidebar open={open} setOpen={setOpen}>
