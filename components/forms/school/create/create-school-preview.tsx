@@ -37,11 +37,11 @@ export const CreateSchoolPreview = ({ data }: Props) => {
       ),
     },
     {
-      title: "Ngành đào tạo",
+      title: "Chương trình đào tạo",
       value: "programs",
       content: (
         <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold text-white bg-gradient-to-br from-purple-700 to-violet-900">
-          <p>Ngành đào tạo</p>
+          <p>Chương trình đào tạo</p>
         </div>
       ),
     },

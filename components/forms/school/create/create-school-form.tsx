@@ -16,6 +16,7 @@ import { CreateSchoolProgram } from "./create-school-program";
 import { CreateSchoolScholarship } from "./create-school-scholarship";
 import { CreateSchoolPreview } from "./create-school-preview";
 import { Country } from "@prisma/client";
+import { CreateSchool } from "@/action/school";
 
 export const CreateSchoolForm = () => {
   const [loading, setLoading] = useState(false);
@@ -54,7 +55,9 @@ export const CreateSchoolForm = () => {
   const form = useForm<CreateSchoolFormValues>({
     resolver: zodResolver(CreateSchoolSchema),
     mode: "onBlur",
-    defaultValues: tempValues,
+    defaultValues: {
+      color: "#7D1F1F",
+    },
   });
 
   const {
@@ -65,18 +68,40 @@ export const CreateSchoolForm = () => {
     getValues,
   } = form;
 
-  const onSubmit = (values?: CreateSchoolFormValues) => {
+  const onSubmit = async (values?: CreateSchoolFormValues) => {
     if (values) {
       const validatedFields = CreateSchoolSchema.safeParse(values);
 
       if (validatedFields.success) {
         // Call API to create school
         const data = validatedFields.data;
-        console.log("VALUES", data);
-        toast.success("Trường học đã được tạo thành công");
-      } else {
-        console.log("ERRORS", validatedFields.error.errors);
-        toast.error("Đã xảy ra lỗi khi tạo trường học");
+
+        console.log(JSON.stringify(data));
+
+        setLoading(true);
+
+        try {
+          await CreateSchool(data)
+            .then((res) => {
+              if (res.success) {
+                toast.success("Trường học đã được tạo thành công");
+                router.push(`/schools/${res.id}`);
+              }
+
+              if (typeof res.error === "string") {
+                toast.error(res.error);
+              } else {
+                console.log("ERRORS", JSON.stringify(res.error));
+                toast.error("Đã xảy ra lỗi khi tạo trường học");
+              }
+            })
+            .finally(() => {
+              setLoading(false);
+            });
+        } catch (error) {
+          console.log("CREATE_SCHOOL_ERROR", error);
+          toast.error("Đã xảy ra lỗi khi tạo trường học");
+        }
       }
     }
   };
@@ -100,7 +125,7 @@ export const CreateSchoolForm = () => {
     },
     {
       id: "Bước 3",
-      name: "Thêm ngành đào tạo",
+      name: "Thêm chương trình đào tạo",
       fields: ["programs"],
     },
     {
@@ -236,15 +261,21 @@ export const CreateSchoolForm = () => {
               <ChevronLeft />
               Quay về
             </button>
-            {currentStep === steps.length - 1 && (
-              <Button
-                onClick={() => onSubmit(data)}
-                disabled={loading}
-                className="border-main dark:border-main-component font-bold bg-main dark:bg-main-component text-white dark:text-main-foreground"
-              >
-                Thêm trường học
-              </Button>
-            )}
+            {currentStep === steps.length - 1 &&
+              (loading ? (
+                <div className="flex items-center gap-x-2">
+                  <span>Đang xử lý...</span>
+                  <div className="w-4 h-4 border-t-2 border-main dark:border-main-component rounded-full animate-spin"></div>
+                </div>
+              ) : (
+                <Button
+                  onClick={() => onSubmit(data)}
+                  disabled={loading}
+                  className="border-main dark:border-main-component font-bold bg-main dark:bg-main-component text-white dark:text-main-foreground"
+                >
+                  Thêm trường học
+                </Button>
+              ))}
             <button
               type="button"
               onClick={next}

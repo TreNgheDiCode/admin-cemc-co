@@ -105,7 +105,7 @@ export const ManageSchoolProgramImages = ({
       render={({ field }) => (
         <FormItem className="col-span-1 md:col-span-2">
           <FormLabel className="text-main dark:text-main-foreground">
-            Hình ảnh ngành đào tạo (tùy chọn)
+            Hình ảnh chương trình đào tạo (tùy chọn)
           </FormLabel>
           <FormControl>
             <MultiImageDropzone

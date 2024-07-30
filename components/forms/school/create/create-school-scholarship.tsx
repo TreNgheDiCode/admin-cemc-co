@@ -6,7 +6,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
 import {
   FormControl,
   FormField,
@@ -17,11 +16,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CreateSchoolFormValues } from "@/data/form-schema";
-import { useEdgeStore } from "@/lib/edgestore";
 import { cn } from "@/lib/utils";
-import { SingleFileDropzone } from "@/types/generic";
 import { AlertTriangleIcon, Trash2Icon } from "lucide-react";
-import { useState } from "react";
 import {
   Control,
   FieldErrors,
@@ -29,9 +25,8 @@ import {
   UseFormGetValues,
   UseFormSetValue,
 } from "react-hook-form";
-import { toast } from "sonner";
-import { LogoDropzone } from "../logo-dropzone";
-import { MultiImageDropzone } from "../multi-image-dropzone";
+import { ManageSchoolScholarshipCover } from "./manage-school-scholarship-cover";
+import { ManageSchoolScholarshipImages } from "./manage-school-scholarship-images";
 
 type Props = {
   control: Control<CreateSchoolFormValues>;
@@ -49,107 +44,6 @@ export const CreateSchoolScholarship = ({
     control,
     name: `scholarships`,
   });
-
-  const { edgestore } = useEdgeStore();
-  const [cover, setCover] = useState<SingleFileDropzone>();
-  const [images, setImages] = useState<SingleFileDropzone[]>();
-  const [uploadingCover, setUploadingCover] = useState(false);
-  const [uploadingImages, setUploadingImages] = useState(false);
-
-  const onSelectedCover = async (index: number, value?: SingleFileDropzone) => {
-    if (value?.file && value.file instanceof File) {
-      setCover(value);
-      setUploadingCover(true);
-      try {
-        await edgestore.publicFiles
-          .upload({
-            file: value.file,
-          })
-          .then((res) => {
-            if (res.url) {
-              setCover({ file: res.url });
-              setValue(`scholarships.${index}.cover`, res.url);
-            }
-            if (!res.url) {
-              toast.error("Có lỗi xảy ra khi tải ảnh lên");
-
-              setCover(undefined);
-            }
-          })
-          .finally(() => setUploadingCover(false));
-      } catch (error) {
-        console.error(error);
-
-        setCover(undefined);
-        setUploadingCover(false);
-
-        toast.error("Có lỗi xảy ra khi tải ảnh lên");
-      }
-    }
-  };
-
-  const onChangeImages = async (
-    index: number,
-    value?: SingleFileDropzone[]
-  ) => {
-    if (value) {
-      setImages(value);
-      setUploadingImages(true);
-      try {
-        const urls = await Promise.all(
-          value.map((file) => {
-            if (!file.file) return;
-
-            edgestore.publicFiles
-              .upload({
-                file: file.file as File,
-                onProgressChange: (progress) => {
-                  uploadImageProgress(progress);
-                },
-              })
-              .then((res) => {
-                if (res.url) {
-                  setValue(`scholarships.${index}.images`, [
-                    ...(getValues(`scholarships.${index}.images`) || []),
-                    res.url,
-                  ]);
-                }
-                if (!res.url) {
-                  toast.error("Có lỗi xảy ra khi tải ảnh lên");
-
-                  return undefined;
-                }
-              })
-              .finally(() => {
-                setUploadingImages(false);
-              });
-          })
-        );
-      } catch (error) {
-        console.error(error);
-
-        setImages(undefined);
-        setUploadingImages(false);
-
-        toast.error("Có lỗi xảy ra khi tải ảnh lên");
-      }
-    }
-  };
-
-  const uploadImageProgress = (progress: SingleFileDropzone["progress"]) => {
-    setImages((prev) =>
-      prev?.map((file) => {
-        if (file.file) {
-          return {
-            ...file,
-            progress,
-          };
-        }
-
-        return file;
-      })
-    );
-  };
 
   const buttonClass =
     "bg-main dark:bg-main-component text-white dark:text-main-foreground";
@@ -184,52 +78,12 @@ export const CreateSchoolScholarship = ({
             <AccordionContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="size-full">
-                  <FormField
+                  <ManageSchoolScholarshipCover
                     control={control}
-                    name={`scholarships.${index}.cover`}
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-main dark:text-main-foreground">
-                          Ảnh đại diện
-                        </FormLabel>
-                        {uploadingCover ? (
-                          <div className="flex items-center justify-center h-64">
-                            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-main/90 dark:border-main-foreground/90"></div>
-                          </div>
-                        ) : (
-                          <FormControl>
-                            <LogoDropzone
-                              disabled={
-                                control._formState.isSubmitting ||
-                                uploadingCover
-                              }
-                              value={cover}
-                              onChange={(file) => {
-                                if (file) {
-                                  onSelectedCover(index, { file });
-                                }
-                              }}
-                            />
-                          </FormControl>
-                        )}
-                        {field.value && (
-                          <Button
-                            disabled={
-                              control._formState.isSubmitting || uploadingCover
-                            }
-                            size="sm"
-                            onClick={() => {
-                              field.onChange(undefined);
-                              setCover(undefined);
-                            }}
-                            className={buttonClass}
-                          >
-                            Xóa ảnh đại diện
-                          </Button>
-                        )}
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    setValue={setValue}
+                    getValues={getValues}
+                    scholarshipIndex={index}
+                    btnClass={buttonClass}
                   />
                 </div>
                 <div className="size-full space-y-4">
@@ -272,43 +126,12 @@ export const CreateSchoolScholarship = ({
                     )}
                   />
                 </div>
-                <FormField
+                <ManageSchoolScholarshipImages
                   control={control}
-                  name={`scholarships.${index}.images`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-main dark:text-main-foreground">
-                        Hình ảnh học bổng (tùy chọn)
-                      </FormLabel>
-                      <FormControl>
-                        <MultiImageDropzone
-                          disabled={
-                            control._formState.isSubmitting || uploadingImages
-                          }
-                          onChange={(files) => {
-                            onChangeImages(index, files);
-                          }}
-                          value={images}
-                        />
-                      </FormControl>
-                      {field.value && (
-                        <Button
-                          disabled={
-                            control._formState.isSubmitting || uploadingImages
-                          }
-                          size="sm"
-                          onClick={() => {
-                            field.onChange([]);
-                            setImages([]);
-                          }}
-                          className={buttonClass}
-                        >
-                          Xóa tất cả hình ảnh
-                        </Button>
-                      )}
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  btnClass={buttonClass}
+                  setValue={setValue}
+                  getValues={getValues}
+                  scholarshipIndex={index}
                 />
               </div>
             </AccordionContent>

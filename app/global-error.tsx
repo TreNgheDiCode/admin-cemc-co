@@ -10,8 +10,8 @@ export default function GlobalError({
   return (
     <html>
       <body>
-        <h2>Something went wrong!</h2>
-        <button onClick={() => reset()}>Try again</button>
+        <h2>Có lỗi xảy ra!</h2>
+        <button onClick={() => reset()}>Đường dẫn không tồn tại</button>
       </body>
     </html>
   );

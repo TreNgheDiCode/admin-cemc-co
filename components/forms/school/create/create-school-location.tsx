@@ -6,7 +6,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
 import {
   FormControl,
   FormDescription,
@@ -18,11 +17,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { CreateSchoolFormValues } from "@/data/form-schema";
-import { useEdgeStore } from "@/lib/edgestore";
 import { cn } from "@/lib/utils";
-import { SingleFileDropzone } from "@/types/generic";
 import { AlertTriangleIcon, Trash2Icon } from "lucide-react";
-import { useState } from "react";
 import {
   Control,
   FieldErrors,
@@ -30,9 +26,8 @@ import {
   UseFormGetValues,
   UseFormSetValue,
 } from "react-hook-form";
-import { toast } from "sonner";
-import { BackgroundDropzone } from "../background-dropzone";
 import { ManageLocationContacts } from "./manage-location-contacts";
+import { ManageSchoolLocationCover } from "./manage-school-location-cover";
 import { ManageSchoolLocationImages } from "./manage-school-location-images";
 
 type Props = {
@@ -53,46 +48,8 @@ export const CreateSchoolLocation = ({
     name: `locations`,
   });
 
-  const { edgestore } = useEdgeStore();
-  const [cover, setCover] = useState<SingleFileDropzone>();
-  const [uploadingCover, setUploadingCover] = useState(false);
-
   const buttonClass =
     "bg-main dark:bg-main-component text-white dark:text-main-foreground";
-
-  const onSelectedCover = async (index: number, value?: SingleFileDropzone) => {
-    if (value?.file && value.file instanceof File) {
-      setCover(value);
-      setUploadingCover(true);
-      try {
-        await edgestore.publicFiles
-          .upload({
-            file: value.file,
-          })
-          .then((res) => {
-            if (res.url) {
-              setCover({ file: res.url });
-              setValue(`locations.${index}.cover`, res.url);
-            }
-            if (!res.url) {
-              toast.error("Có lỗi xảy ra khi tải ảnh lên");
-
-              setCover(undefined);
-            }
-          })
-          .finally(() => {
-            setUploadingCover(false);
-          });
-      } catch (error) {
-        console.error(error);
-
-        setCover(undefined);
-        setUploadingCover(false);
-
-        toast.error("Có lỗi xảy ra khi tải ảnh lên");
-      }
-    }
-  };
 
   return (
     <>
@@ -128,52 +85,12 @@ export const CreateSchoolLocation = ({
               </AccordionTrigger>
               <AccordionContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
+                  <ManageSchoolLocationCover
                     control={control}
-                    name={`locations.${index}.cover`}
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-main dark:text-main-foreground">
-                          Ảnh bìa cơ sở
-                        </FormLabel>
-                        {uploadingCover ? (
-                          <div className="flex items-center justify-center h-64">
-                            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-main/90 dark:border-main-foreground/90"></div>
-                          </div>
-                        ) : (
-                          <FormControl>
-                            <BackgroundDropzone
-                              disabled={
-                                control._formState.isSubmitting ||
-                                uploadingCover
-                              }
-                              value={{ file: field.value } || cover}
-                              onChange={(file) => {
-                                if (file) {
-                                  onSelectedCover(index, { file });
-                                }
-                              }}
-                            />
-                          </FormControl>
-                        )}
-                        {field.value && (
-                          <Button
-                            disabled={
-                              control._formState.isSubmitting || uploadingCover
-                            }
-                            size="sm"
-                            onClick={() => {
-                              field.onChange(undefined);
-                              setCover(undefined);
-                            }}
-                            className={buttonClass}
-                          >
-                            Xóa ảnh bìa
-                          </Button>
-                        )}
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    getValues={getValue}
+                    locationIndex={index}
+                    setValue={setValue}
+                    btnClass={buttonClass}
                   />
                   <div className="space-y-4 size-ful">
                     <FormField
@@ -260,7 +177,7 @@ export const CreateSchoolLocation = ({
       })}
       <div className="flex justify-center items-center mt-4">
         <button
-          disabled={control._formState.isSubmitting || uploadingCover}
+          disabled={control._formState.isSubmitting}
           type="button"
           onClick={() => {
             append({

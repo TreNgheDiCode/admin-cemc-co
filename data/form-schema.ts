@@ -51,10 +51,10 @@ export const SchoolLocationSchema = z.object({
 
 export const SchoolProgramSchema = z.object({
   name: z.string().min(3, {
-    message: "Tên ngành đào tạo phải có ít nhất 3 ký tự",
+    message: "Tên chương trình đào tạo phải có ít nhất 3 ký tự",
   }),
   description: z.string().min(3, {
-    message: "Mô tả ngành đào tạo phải có ít nhất 3 ký tự",
+    message: "Mô tả chương trình đào tạo phải có ít nhất 3 ký tự",
   }),
   cover: z.string({
     required_error: "Ảnh bìa không được để trống",
@@ -110,7 +110,7 @@ export const CreateSchoolSchema = z.object({
     message: "Phải có ít nhất một cơ sở",
   }),
   programs: z.array(SchoolProgramSchema).min(1, {
-    message: "Phải có ít nhất một ngành đào tạo",
+    message: "Phải có ít nhất một chương trình đào tạo",
   }),
   galleries: z.optional(z.array(SchoolGallerySchema)),
   scholarships: z.optional(z.array(SchoolScholarshipSchema)),

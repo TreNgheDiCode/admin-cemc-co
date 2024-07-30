@@ -25,9 +25,9 @@ export const PreviewSchoolInformation = ({ school }: Props) => {
           src={school.background}
           alt={school.name}
           quality={100}
-          width={793 * 2}
-          height={417 * 2}
+          fill
           className="object-cover"
+          priority
         />
       </div>
       <div className="size-full flex items-center justify-center gap-4 flex-col z-50">

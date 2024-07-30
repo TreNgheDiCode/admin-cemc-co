@@ -6,7 +6,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
 import {
   FormControl,
   FormField,
@@ -17,11 +16,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CreateSchoolFormValues } from "@/data/form-schema";
-import { useEdgeStore } from "@/lib/edgestore";
 import { cn } from "@/lib/utils";
-import { SingleFileDropzone } from "@/types/generic";
 import { AlertTriangleIcon, Trash2Icon } from "lucide-react";
-import { useState } from "react";
 import {
   Control,
   FieldErrors,
@@ -29,8 +25,6 @@ import {
   UseFormGetValues,
   UseFormSetValue,
 } from "react-hook-form";
-import { toast } from "sonner";
-import { MultiImageDropzone } from "../multi-image-dropzone";
 import { ManageSchoolGalleryImages } from "./manage-school-gallery-images";
 
 type Props = {
@@ -49,73 +43,6 @@ export const CreateSchoolGallery = ({
     control,
     name: `galleries`,
   });
-
-  const { edgestore } = useEdgeStore();
-  const [images, setImages] = useState<SingleFileDropzone[]>();
-  const [uploadingImages, setUploadingImages] = useState(false);
-
-  const onChangeImages = async (
-    index: number,
-    value?: SingleFileDropzone[]
-  ) => {
-    if (value) {
-      setImages(value);
-      setUploadingImages(true);
-      try {
-        await Promise.all(
-          value.map((file) => {
-            if (!file.file) return;
-
-            edgestore.publicFiles
-              .upload({
-                file: file.file as File,
-                onProgressChange: (progress) => {
-                  uploadImageProgress(progress);
-                },
-              })
-              .then((res) => {
-                if (res.url) {
-                  setValue(`galleries.${index}.images`, [
-                    ...(getValues(`galleries.${index}.images`) || []),
-                    res.url,
-                  ]);
-                }
-                if (!res.url) {
-                  toast.error("Có lỗi xảy ra khi tải ảnh lên");
-
-                  return undefined;
-                }
-              })
-              .finally(() => {
-                setUploadingImages(false);
-              });
-          })
-        );
-      } catch (error) {
-        console.error(error);
-
-        setImages(undefined);
-        setUploadingImages(false);
-
-        toast.error("Có lỗi xảy ra khi tải ảnh lên");
-      }
-    }
-  };
-
-  const uploadImageProgress = (progress: SingleFileDropzone["progress"]) => {
-    setImages((prev) =>
-      prev?.map((file) => {
-        if (file.file) {
-          return {
-            ...file,
-            progress,
-          };
-        }
-
-        return file;
-      })
-    );
-  };
 
   const buttonClass =
     "bg-main dark:bg-main-component text-white dark:text-main-foreground";

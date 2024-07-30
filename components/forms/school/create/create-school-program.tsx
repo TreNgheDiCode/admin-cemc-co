@@ -6,7 +6,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
 import {
   FormControl,
   FormField,
@@ -17,11 +16,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CreateSchoolFormValues } from "@/data/form-schema";
-import { useEdgeStore } from "@/lib/edgestore";
 import { cn } from "@/lib/utils";
-import { SingleFileDropzone } from "@/types/generic";
 import { AlertTriangleIcon, Trash2Icon } from "lucide-react";
-import { useState } from "react";
 import {
   Control,
   FieldErrors,
@@ -29,8 +25,7 @@ import {
   UseFormGetValues,
   UseFormSetValue,
 } from "react-hook-form";
-import { toast } from "sonner";
-import { LogoDropzone } from "../logo-dropzone";
+import { ManageSchoolProgramCover } from "./manage-school-program-cover";
 import { ManageSchoolProgramImages } from "./manage-school-program-images";
 
 type Props = {
@@ -49,42 +44,6 @@ export const CreateSchoolProgram = ({
     control,
     name: `programs`,
   });
-
-  const { edgestore } = useEdgeStore();
-  const [cover, setCover] = useState<SingleFileDropzone>();
-  const [uploadingCover, setUploadingCover] = useState(false);
-
-  const onSelectedCover = async (index: number, value?: SingleFileDropzone) => {
-    if (value?.file && value.file instanceof File) {
-      setCover(value);
-      setUploadingCover(true);
-      try {
-        await edgestore.publicFiles
-          .upload({
-            file: value.file,
-          })
-          .then((res) => {
-            if (res.url) {
-              setCover({ file: res.url });
-              setValue(`programs.${index}.cover`, res.url);
-            }
-            if (!res.url) {
-              toast.error("Có lỗi xảy ra khi tải ảnh lên");
-
-              setCover(undefined);
-            }
-          })
-          .finally(() => setUploadingCover(false));
-      } catch (error) {
-        console.error(error);
-
-        setCover(undefined);
-        setUploadingCover(false);
-
-        toast.error("Có lỗi xảy ra khi tải ảnh lên");
-      }
-    }
-  };
 
   const buttonClass =
     "bg-main dark:bg-main-component text-white dark:text-main-foreground";
@@ -105,7 +64,7 @@ export const CreateSchoolProgram = ({
                 errors?.programs?.[index] && "text-red-700"
               )}
             >
-              {`Ngành đào tạo ${index + 1}`}
+              {`Chương trình đào tạo ${index + 1}`}
 
               <div className="absolute right-8">
                 <Trash2Icon className="size-4" onClick={() => remove(index)} />
@@ -119,52 +78,12 @@ export const CreateSchoolProgram = ({
             <AccordionContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="size-full">
-                  <FormField
+                  <ManageSchoolProgramCover
                     control={control}
-                    name={`programs.${index}.cover`}
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-main dark:text-main-foreground">
-                          Ảnh đại diện
-                        </FormLabel>
-                        {uploadingCover ? (
-                          <div className="flex items-center justify-center h-64">
-                            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-main/90 dark:border-main-foreground/90"></div>
-                          </div>
-                        ) : (
-                          <FormControl>
-                            <LogoDropzone
-                              disabled={
-                                control._formState.isSubmitting ||
-                                uploadingCover
-                              }
-                              value={{ file: field.value } || cover}
-                              onChange={(file) => {
-                                if (file) {
-                                  onSelectedCover(index, { file });
-                                }
-                              }}
-                            />
-                          </FormControl>
-                        )}
-                        {field.value && (
-                          <Button
-                            disabled={
-                              control._formState.isSubmitting || uploadingCover
-                            }
-                            size="sm"
-                            onClick={() => {
-                              field.onChange(undefined);
-                              setCover(undefined);
-                            }}
-                            className={buttonClass}
-                          >
-                            Xóa ảnh đại diện
-                          </Button>
-                        )}
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    programIndex={index}
+                    setValue={setValue}
+                    getValues={getValues}
+                    btnClass={buttonClass}
                   />
                 </div>
                 <div className="size-full space-y-4">
@@ -174,13 +93,13 @@ export const CreateSchoolProgram = ({
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-main dark:text-main-foreground">
-                          Tên ngành đào tạo
+                          Tên chương trình đào tạo
                         </FormLabel>
                         <FormControl>
                           <Input
                             disabled={control._formState.isSubmitting}
                             {...field}
-                            placeholder="Nhập tên ngành đào tạo"
+                            placeholder="Nhập tên chương trình đào tạo"
                           />
                         </FormControl>
                         <FormMessage />
@@ -232,7 +151,7 @@ export const CreateSchoolProgram = ({
           }}
           className="px-4 py-2 rounded-md border border-main dark:border-main-component font-bold bg-main dark:bg-main-component text-white dark:text-main-foreground text-sm hover:shadow-[4px_4px_0px_0px_rgba(125, 31, 31)] transition duration-200"
         >
-          Thêm ngành đào tạo khác
+          Thêm chương trình đào tạo khác
         </button>
       </div>
     </>

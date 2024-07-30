@@ -56,8 +56,8 @@ export const ManageSchoolScholarshipImages = ({
               })
               .then((res) => {
                 if (res.url) {
-                  setValue(`locations.${index}.images`, [
-                    ...(getValues(`locations.${index}.images`) || []),
+                  setValue(`scholarships.${index}.images`, [
+                    ...(getValues(`scholarships.${index}.images`) || []),
                     res.url,
                   ]);
                 }
@@ -101,7 +101,7 @@ export const ManageSchoolScholarshipImages = ({
   return (
     <FormField
       control={control}
-      name={`locations.${scholarshipIndex}.images`}
+      name={`scholarships.${scholarshipIndex}.images`}
       render={({ field }) => (
         <FormItem className="col-span-1 md:col-span-2">
           <FormLabel className="text-main dark:text-main-foreground">
