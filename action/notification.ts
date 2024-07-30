@@ -133,3 +133,22 @@ export const GetNotificationsPush = async (userId: string) => {
     return { error: "Có lỗi xảy ra khi lấy thông báo" };
   }
 };
+
+export const MarkNotificationAsRead = async (notificationId: string) => {
+  try {
+    await db.notificationPush.update({
+      where: {
+        id: notificationId,
+      },
+      data: {
+        isRead: true,
+      },
+    });
+
+    return { success: "Đánh dấu thông báo thành công" };
+  } catch (error) {
+    console.error("Error marking notification as read", error);
+
+    return { error: "Có lỗi xảy ra khi đánh dấu thông báo" };
+  }
+};

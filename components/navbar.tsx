@@ -5,6 +5,7 @@ import { Heading } from "./heading";
 import { ThemeToggle } from "./theme-toggle";
 import { UserMenuDropdown } from "./user-menu-dropdown";
 import { Button } from "./ui/button";
+import { NotificationsList } from "./notifications-list";
 
 type Props = {
   title?: string;
@@ -33,6 +34,7 @@ export const Navbar = ({ title, description }: Props) => {
             Quay về trang chính
           </Button>
         )}
+        <NotificationsList />
         <ThemeToggle />
         <UserMenuDropdown />
       </div>

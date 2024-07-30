@@ -3,9 +3,13 @@
 import { SendGeneralNotifications } from "@/action/notification";
 import { Navbar } from "@/components/navbar";
 import { Button } from "@/components/ui/button";
+import { useNotificationsPush } from "@/hooks/use-notifications-push";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 export default function Home() {
+  const router = useRouter();
+  const { loadNotifications } = useNotificationsPush();
   const handleTestNotification = async () => {
     await SendGeneralNotifications(
       "Test Notification",
@@ -14,6 +18,8 @@ export default function Home() {
       if (res.error) {
         toast.error(res.error);
       }
+      router.refresh();
+      loadNotifications();
     });
   };
 

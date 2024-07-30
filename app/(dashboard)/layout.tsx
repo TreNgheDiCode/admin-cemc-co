@@ -1,7 +1,5 @@
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
-import { Navbar } from "@/components/navbar";
 import { cn } from "@/lib/utils";
-import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 
 type Props = {
   children: React.ReactNode;
