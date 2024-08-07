@@ -1,4 +1,5 @@
 import {
+  Gender,
   News,
   School,
   SchoolGallery,
@@ -12,6 +13,18 @@ import {
   Student,
 } from "@prisma/client";
 import { AccelerateInfo } from "@prisma/extension-accelerate";
+
+export type SchoolStudent = Student & {
+  account: {
+    name: string;
+    image: string | null;
+    email: string;
+    phoneNumber: string;
+    dob: Date;
+    gender: Gender;
+    address: string;
+  };
+};
 
 export type SchoolData = (School & {
   news: News[];

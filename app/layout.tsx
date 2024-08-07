@@ -6,6 +6,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Lusitana } from "next/font/google";
 import "./globals.css";
+import { NextUIProvider } from "@nextui-org/system";
 
 const lusitana = Lusitana({ weight: ["400"], subsets: ["latin"] });
 
@@ -30,14 +31,18 @@ export default function RootLayout({
     >
       <html lang="en">
         <body>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <EdgeStoreProvider>{children}</EdgeStoreProvider>
-          </ThemeProvider>
+          <EdgeStoreProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <NextUIProvider className="size-full min-h-screen">
+                {children}
+              </NextUIProvider>
+            </ThemeProvider>
+          </EdgeStoreProvider>
           <Toaster />
         </body>
       </html>

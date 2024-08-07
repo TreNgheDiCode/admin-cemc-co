@@ -1,9 +1,12 @@
+import Loading from "@/components/loading";
 import { Navbar } from "@/components/navbar";
 import { SchoolInformation } from "@/components/schools/school-information";
 import { SchoolTabs } from "@/components/schools/school-tabs";
+import { StudentSchoolTable } from "@/components/tables/schools/student-school-table";
 import { GetSchoolInformation, GetSchools } from "@/data/schools";
 import { cn } from "@/lib/utils";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 export const metadata = {
   title: "Thông tin trường học | CANADA MEDICAL AND EDUCATION",
@@ -47,7 +50,7 @@ const SchoolIdPage = async ({ params }: Props) => {
       title: "Thông tin",
       value: "info",
       content: (
-        <div className="w-full overflow-hidden relative h-full gap-4 rounded-2xl p-10 text-xl md:text-4xl font-bold text-main dark:text-main-foreground dark:bg-main-component shadow-md border bg-main-foreground">
+        <div className="w-full overflow-hidden relative h-full rounded-2xl shadow-md border">
           <SchoolInformation school={school} />
         </div>
       ),
@@ -56,8 +59,10 @@ const SchoolIdPage = async ({ params }: Props) => {
       title: "Học sinh",
       value: "students",
       content: (
-        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold text-white bg-gradient-to-br from-purple-700 to-violet-900">
-          <p>Học sinh</p>
+        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold dark:text-main-foreground bg-main-foreground dark:bg-main-component">
+          <Suspense fallback={<Loading />}>
+            <StudentSchoolTable schoolId={params.schoolId} />
+          </Suspense>
         </div>
       ),
     },

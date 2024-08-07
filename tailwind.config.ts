@@ -7,6 +7,7 @@ const {
 } = require("tailwindcss/lib/util/flattenColorPalette");
 
 import type { Config } from "tailwindcss";
+import { nextui } from "@nextui-org/theme";
 
 const config = {
   darkMode: ["class"],
@@ -16,6 +17,7 @@ const config = {
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
     "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/@nextui-org/theme/dist/components/(button|chip|date-input|date-picker|dropdown|input|pagination|table|ripple|spinner|calendar|popover|menu|divider|checkbox|spacer).js",
   ],
   prefix: "",
   theme: {
@@ -104,6 +106,7 @@ const config = {
   },
   plugins: [
     require("tailwindcss-animate"),
+    nextui(),
     addVariablesForColors,
     function ({ matchUtilities, theme }: any) {
       matchUtilities(

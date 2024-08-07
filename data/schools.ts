@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { SchoolLib } from "@/types/school";
+import { StudentStatus } from "@prisma/client";
 
 export const GetSchools = async (page?: number, pageSize?: number) => {
   try {
@@ -129,5 +130,41 @@ export const GetSchoolInformation = async (schoolId: string) => {
     console.log("GET SCHOOL INFORMATION DATA ERROR", error);
 
     return null;
+  }
+};
+
+export const GetSchoolStudents = async (schoolId: string) => {
+  try {
+    const students = await db.student.findMany({
+      where: {
+        schoolId,
+        status: {
+          in: [StudentStatus.APPROVED, StudentStatus.STUDYING],
+        },
+      },
+      include: {
+        account: {
+          select: {
+            image: true,
+            name: true,
+            email: true,
+            phoneNumber: true,
+            dob: true,
+            gender: true,
+            address: true,
+          },
+        },
+      },
+      cacheStrategy: {
+        swr: 60,
+        ttl: 300,
+      },
+    });
+
+    return students;
+  } catch (error) {
+    console.log("GET SCHOOL STUDENTS DATA ERROR", error);
+
+    return [];
   }
 };
