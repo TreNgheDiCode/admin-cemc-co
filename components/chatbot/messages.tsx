@@ -5,9 +5,8 @@ import { cn } from "@/lib/utils";
 import { IconBrandOpenai, IconUser } from "@tabler/icons-react";
 import { StreamableValue } from "ai/rsc";
 import { MemoizedReactMarkdown } from "../markdown";
-import remarkGfm from "remark-gfm";
-import remarkMath from "remark-math";
 import { CodeBlock } from "./code-block";
+import Image from "next/image";
 
 export function UserMessage({ children }: { children: React.ReactNode }) {
   return (
@@ -78,6 +77,28 @@ export function BotMessage({
           {text}
         </MemoizedReactMarkdown>
       </div>
+    </div>
+  );
+}
+
+export function BotCard({
+  children,
+  showAvatar = true,
+}: {
+  children: React.ReactNode;
+  showAvatar?: boolean;
+}) {
+  return (
+    <div className="group relative flex items-start md:-ml-12">
+      <div
+        className={cn(
+          "flex size-[24px] shrink-0 select-none items-center justify-center rounded-md border bg-primary text-primary-foreground shadow-sm",
+          !showAvatar && "invisible"
+        )}
+      >
+        <IconBrandOpenai />
+      </div>
+      <div className="ml-4 flex-1 pl-2">{children}</div>
     </div>
   );
 }

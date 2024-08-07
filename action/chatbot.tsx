@@ -1,33 +1,40 @@
 "use server";
 
-import { BotMessage } from "@/components/chatbot/messages";
+import {
+  BotCard,
+  BotMessage,
+  UserMessage,
+} from "@/components/chatbot/messages";
+import { Countries } from "@/components/chatbot/yields/countries";
+import { CountriesSkeleton } from "@/components/chatbot/yields/countries-skeleton";
 import Loading from "@/components/loading";
+import { sleep } from "@/lib/utils";
+import { Chat, Message } from "@/types/chat";
 import { openai } from "@ai-sdk/openai";
+import { auth } from "@clerk/nextjs/server";
 import { generateId } from "ai";
 import {
   createAI,
   createStreamableValue,
+  getAIState,
   getMutableAIState,
   streamUI,
 } from "ai/rsc";
 import { ReactNode } from "react";
 import { z } from "zod";
 
-export interface ServerMessage {
-  role: "user" | "assistant";
-  content: string;
-}
-
-export interface ClientMessage {
-  id: string;
-  role: "user" | "assistant";
-  display: ReactNode;
-}
-
-export async function submitUserMessage(input: string): Promise<ClientMessage> {
+export async function submitUserMessage(input: string) {
   "use server";
 
   const history = getMutableAIState();
+
+  history.update({
+    ...history.get(),
+    messages: [
+      ...history.get().messages,
+      { id: generateId(), role: "user", content: input },
+    ],
+  });
 
   let textStream: undefined | ReturnType<typeof createStreamableValue<string>>;
   let textNode: undefined | React.ReactNode;
@@ -64,8 +71,27 @@ export async function submitUserMessage(input: string): Promise<ClientMessage> {
     Một câu trả lời hoàn chỉnh và đầy đủ nhất tối thiểu phải bao gồm các bộ phận sau: Mở đầu, Nội dung, Kết luận. Tuy nhiên không được ghi rõ ràng ra mà thông qua kết cấu câu trả lời, thể hiện được những phần đó.
 
     Bạn không được phép trả lời những câu hỏi liên quan đến những trường khác ngoài hệ thống. Nếu người dùng hỏi về những trường khác, bạn cần thông báo rằng bạn không có thông tin về trường đó và hướng dẫn họ liên hệ trực tiếp với trường đó để được hỗ trợ.
+
+    Nếu người dùng hỏi về thông tin cá nhân, bạn cần thông báo rằng bạn không thể cung cấp thông tin cá nhân và hướng dẫn họ liên hệ với bộ phận chăm sóc khách hàng của công ty để được hỗ trợ.
+
+    Nếu người dùng hỏi về thông tin các quốc gia mà công ty đang cung cấp, gọi \`show_support_countries\` để hiển thị giao diện danh sách các quốc gia mà công ty đang cung cấp.
+
+    Nếu người dùng hỏi về thông tin các trường đại học mà công ty đang quản lý, gọi \`show_support_school\` để hiển thị giao diện danh sách các trường đại học mà công ty đang quản lý.
+
+    Nếu người dùng yêu cầu được đăng ký tư vấn du học, gọi \`register_consultation\` để đăng ký tư vấn du học.
+
+    Những giao diện nào chưa được hỗ trợ, bạn cần thông báo rằng bạn không thể giúp được trong lúc này, tính năng đang được phát triển và hướng dẫn họ liên hệ với bộ phận chăm sóc khách hàng của công ty kèm theo liên hệ được cung cấp để được hỗ trợ.
+
+    Với những công việc và vấn đề bạn không làm được hoặc không có thông tin, bạn cần thông báo rằng bạn không thể giúp được và hướng dẫn họ liên hệ với bộ phận chăm sóc khách hàng của công ty kèm theo liên hệ được cung cấp để được hỗ trợ.
     `,
-    messages: [...history.get(), { role: "user", content: input }],
+    messages: [
+      ...history.get().messages.map((message: any) => ({
+        role: message.role,
+        content: message.content,
+        name: message.name,
+      })),
+      { role: "user", content: input },
+    ],
     text: ({ content, done, delta }) => {
       if (!textStream) {
         textStream = createStreamableValue("");
@@ -74,7 +100,7 @@ export async function submitUserMessage(input: string): Promise<ClientMessage> {
 
       if (done) {
         textStream.done();
-        history.done((messages: ServerMessage[]) => [
+        history.done((messages: AIState[]) => [
           ...messages,
           { role: "assistant", content },
         ]);
@@ -84,19 +110,178 @@ export async function submitUserMessage(input: string): Promise<ClientMessage> {
 
       return textNode;
     },
+    tools: {
+      showSupportCountries: {
+        description:
+          "Hiển thị danh sách các quốc gia mà công ty đang cung cấp.",
+        parameters: z.object({
+          countries: z.array(
+            z.object({
+              name: z.string().describe("Tên quốc gia."),
+              flag: z
+                .string()
+                .describe("Link ảnh cờ quốc gia dưới dạng file png."),
+            })
+          ),
+        }),
+        generate: async function* ({ countries }) {
+          yield (
+            <BotCard>
+              <CountriesSkeleton />
+            </BotCard>
+          );
+
+          await sleep(2000);
+
+          const toolCallId = generateId();
+
+          history.done({
+            ...history.get(),
+            messages: [
+              ...history.get().messages,
+              {
+                id: generateId(),
+                role: "assistant",
+                content: [
+                  {
+                    type: "tool-call",
+                    toolName: "showSupportCountries",
+                    toolCallId,
+                    args: { countries },
+                  },
+                ],
+              },
+              {
+                id: generateId(),
+                role: "assistant",
+                content: [
+                  {
+                    type: "tool-result",
+                    toolName: "showSupportCountries",
+                    toolCallId,
+                    result: {
+                      countries,
+                    },
+                  },
+                ],
+              },
+            ],
+          });
+
+          return (
+            <BotCard>
+              <Countries props={countries} />
+            </BotCard>
+          );
+        },
+      },
+    },
   });
 
   return {
     id: generateId(),
-    role: "assistant",
     display: result.value,
   };
 }
 
-export const AI = createAI<ServerMessage[], ClientMessage[]>({
+export type AIState = {
+  chatId: string;
+  messages: Message[];
+};
+
+export type UIState = {
+  id: string;
+  display: ReactNode;
+}[];
+
+export const AI = createAI<AIState, UIState>({
   actions: {
     submitUserMessage,
   },
-  initialAIState: [],
   initialUIState: [],
+  initialAIState: { chatId: generateId(), messages: [] },
+  onGetUIState: async () => {
+    "use server";
+
+    const { userId } = auth();
+
+    if (userId) {
+      const aiState = getAIState() as Chat;
+
+      if (aiState) {
+        const uiState = getUIStateFromAIState(aiState);
+        return uiState;
+      }
+    } else {
+      return;
+    }
+  },
+  onSetAIState: async ({ state }) => {
+    "use server";
+
+    const { userId } = auth();
+
+    if (userId) {
+      const { chatId, messages } = state;
+
+      const createdAt = new Date();
+      const path = `/chat/${chatId}`;
+
+      const firstMessageContent = messages[0].content as string;
+      const title = firstMessageContent.substring(0, 100);
+
+      const chat: Chat = {
+        id: chatId,
+        title,
+        createdAt,
+        userId,
+        path,
+        messages,
+      };
+
+      await saveChat(chat);
+    }
+  },
 });
+
+export const getUIStateFromAIState = (aiState: Chat) => {
+  return aiState.messages
+    .filter((message) => message.role !== "system")
+    .map((message, index) => ({
+      id: `${aiState.id}-${index}`,
+      display:
+        message.role === "tool" && typeof message.content !== "string" ? (
+          message.content.map((tool) => {
+            return tool.toolName === "showSupportCountries" ? (
+              <BotCard>
+                {/* @ts-expect-error */}
+                <Countries props={tool.result} />
+              </BotCard>
+            ) : tool.toolName === "showSupportSchool" ? (
+              <BotCard>
+                <div></div>
+              </BotCard>
+            ) : tool.toolName === "registerConsultation" ? (
+              <BotCard>
+                <div></div>
+              </BotCard>
+            ) : null;
+          })
+        ) : message.role === "user" ? (
+          <UserMessage>{message.content as string}</UserMessage>
+        ) : message.role === "assistant" &&
+          typeof message.content === "string" ? (
+          <BotMessage content={message.content} />
+        ) : null,
+    }));
+};
+
+export async function saveChat(chat: Chat) {
+  const { userId } = auth();
+
+  if (userId) {
+    console.log(JSON.stringify(chat, null, 2));
+  } else {
+    return;
+  }
+}

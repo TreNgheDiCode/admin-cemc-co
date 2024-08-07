@@ -1,10 +1,4 @@
-import { ReactNode } from "react";
-
-export interface Message {
-  role: "user" | "assistant";
-  content: string;
-  display?: ReactNode;
-}
+import { CoreMessage } from "ai";
 
 export interface Chat extends Record<string, any> {
   id: string;
@@ -35,9 +29,35 @@ export interface AuthResult {
   message: string;
 }
 
-export interface User extends Record<string, any> {
+export interface Chat {
   id: string;
-  email: string;
-  password: string;
-  salt: string;
+  title: string;
+  createdAt: Date;
+  userId: string;
+  path: string;
+  messages: Message[];
+  sharePath?: string;
+}
+
+export interface Message {
+  id: string;
+  role: string;
+  content: ContentElement[] | string;
+}
+
+export interface ContentElement {
+  type: string;
+  toolName: string;
+  toolCallId: string;
+  args?: Args;
+  result?: Args;
+}
+
+export interface Args {
+  countries: Country[];
+}
+
+export interface Country {
+  name: string;
+  flag: string;
 }

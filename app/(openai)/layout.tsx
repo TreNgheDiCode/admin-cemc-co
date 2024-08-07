@@ -1,3 +1,4 @@
+import { AI } from "@/action/chatbot";
 import { ChatBotSidebar } from "@/components/chatbot-sidebar";
 import { PromptForm } from "@/components/chatbot/prompt-form";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -6,8 +7,6 @@ import { TypewriterEffectSmooth } from "@/components/ui/typewriter-effect";
 import { UserMenuDropdown } from "@/components/user-menu-dropdown";
 import { cn } from "@/lib/utils";
 import { FooterText } from "./chatbot/footer";
-import { AI } from "@/action/chatbot";
-import { ButtonScrollToBottom } from "@/components/chatbot/button-scroll-to-bottom";
 
 type Props = {
   children: React.ReactNode;
