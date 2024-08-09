@@ -117,6 +117,30 @@ export const GetSchoolsCard = async () => {
   }
 };
 
+export const GetSchoolWrapper = async (schoolId: string) => {
+  try {
+    const school = await db.school.findUnique({
+      where: {
+        id: schoolId,
+      },
+      select: {
+        isPublished: true,
+        name: true,
+      },
+      cacheStrategy: {
+        swr: 300,
+        ttl: 3600,
+      },
+    });
+
+    return school;
+  } catch (error) {
+    console.log("GET SCHOOL WRAPPER DATA ERROR", error);
+
+    return null;
+  }
+};
+
 export const GetSchoolInformation = async (schoolId: string) => {
   try {
     const school = await db.school.findUnique({
@@ -164,6 +188,104 @@ export const GetSchoolStudents = async (schoolId: string) => {
     return students;
   } catch (error) {
     console.log("GET SCHOOL STUDENTS DATA ERROR", error);
+
+    return [];
+  }
+};
+
+export const GetSchoolLocations = async (schoolId: string) => {
+  try {
+    const locations = await db.schoolLocation.findMany({
+      where: {
+        schoolId,
+      },
+      cacheStrategy: {
+        swr: 60,
+        ttl: 300,
+      },
+    });
+
+    return locations;
+  } catch (error) {
+    console.log("GET SCHOOL LOCATIONS DATA ERROR", error);
+
+    return [];
+  }
+};
+
+export const GetSchoolPrograms = async (schoolId: string) => {
+  try {
+    const programs = await db.schoolProgram.findMany({
+      where: {
+        schoolId,
+      },
+      include: {
+        _count: {
+          select: {
+            studentPrograms: true,
+          },
+        },
+      },
+      cacheStrategy: {
+        swr: 60,
+        ttl: 300,
+      },
+    });
+
+    return programs;
+  } catch (error) {
+    console.log("GET SCHOOL PROGRAMS DATA ERROR", error);
+
+    return [];
+  }
+};
+
+export const GetSchoolGalleries = async (schoolId: string) => {
+  try {
+    const galleries = await db.schoolGallery.findMany({
+      where: {
+        schoolId,
+      },
+      include: {
+        images: true,
+      },
+      cacheStrategy: {
+        swr: 60,
+        ttl: 300,
+      },
+    });
+
+    return galleries;
+  } catch (error) {
+    console.log("GET SCHOOL GALLERIES DATA ERROR", error);
+
+    return [];
+  }
+};
+
+export const GetSchoolScholarships = async (schoolId: string) => {
+  try {
+    const scholarships = await db.schoolScholarship.findMany({
+      where: {
+        schoolId,
+      },
+      include: {
+        images: true,
+        _count: {
+          select: {
+            owners: true,
+          },
+        },
+      },
+      cacheStrategy: {
+        swr: 60,
+        ttl: 300,
+      },
+    });
+
+    return scholarships;
+  } catch (error) {
+    console.log("GET SCHOOL SCHOLARSHIPS DATA ERROR", error);
 
     return [];
   }

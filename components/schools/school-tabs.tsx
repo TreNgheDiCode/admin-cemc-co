@@ -53,7 +53,10 @@ export const SchoolTabs = ({
             }}
             onMouseEnter={() => setHovering(true)}
             onMouseLeave={() => setHovering(false)}
-            className={cn("relative px-4 py-2 rounded-full", tabClassName)}
+            className={cn(
+              "relative px-4 py-2 rounded-full dark:bg-main-component bg-neutral-100",
+              tabClassName
+            )}
             style={{
               transformStyle: "preserve-3d",
             }}
@@ -64,13 +67,19 @@ export const SchoolTabs = ({
                 layoutId="clickedbutton"
                 transition={{ type: "spring", bounce: 0.3, duration: 0.6 }}
                 className={cn(
-                  "absolute inset-0 bg-main text-white dark:text-main-foreground dark:bg-main-foreground rounded-full ",
+                  "absolute inset-0 bg-main dark:bg-main-foreground rounded-full ",
                   activeTabClassName
                 )}
               />
             )}
 
-            <span className="relative block text-white dark:text-main-background font-medium">
+            <span
+              className={cn(
+                "relative block text-main-component dark:text-main-foreground font-medium",
+                active.value === tab.value &&
+                  "!text-white dark:!text-main-background"
+              )}
+            >
               {tab.title}
             </span>
           </HoverBorderGradient>

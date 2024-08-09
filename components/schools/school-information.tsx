@@ -4,12 +4,20 @@ import { InformationForm } from "../forms/school/update/information-form";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Separator } from "../ui/separator";
 import { TypewriterEffectSmooth } from "../ui/typewriter-effect";
+import { GetSchoolInformation } from "@/data/schools";
+import { redirect } from "next/navigation";
 
 type Props = {
-  school: School;
+  schoolId: string;
 };
 
-export const SchoolInformation = async ({ school }: Props) => {
+export const SchoolInformation = async ({ schoolId }: Props) => {
+  const school = await GetSchoolInformation(schoolId);
+
+  if (!school) {
+    redirect("/schools");
+  }
+
   const schoolWordsName = school.name.split(" ");
   const words = schoolWordsName.map((word) => {
     return {

@@ -254,9 +254,10 @@ model StudentSchoolScholarship {
 }
 
 model SchoolGallery {
-  id          String  @id @default(cuid())
+  id          String @id @default(cuid())
   name        String
-  description String?
+  description String
+  cover       String
 
   images SchoolGalleryImage[]
 
@@ -281,10 +282,11 @@ model SchoolGalleryImage {
 model SchoolLocation {
   id String @id @default(cuid())
 
-  cover   String
-  name    String
-  address String  @unique
-  isMain  Boolean @default(false)
+  cover       String
+  name        String
+  description String?
+  address     String  @unique
+  isMain      Boolean @default(false)
 
   images   SchoolLocationImage[]
   contacts SchoolLocationContact[]

@@ -14,6 +14,28 @@ import {
 } from "@prisma/client";
 import { AccelerateInfo } from "@prisma/extension-accelerate";
 
+export type SchoolScholarshipLib = SchoolScholarship & {
+  images: SchoolScholarshipImage[];
+  _count: {
+    owners: number;
+  };
+};
+
+export type SchoolGalleryLib = SchoolGallery & {
+  images: SchoolGalleryImage[];
+};
+
+export type SchoolProgramLib = SchoolProgram & {
+  _count: {
+    studentPrograms: number;
+  };
+};
+
+export type SchoolLocationLib = SchoolLocation & {
+  contacts: SchoolLocationContact[];
+  images: SchoolLocationImage[];
+};
+
 export type SchoolStudent = Student & {
   account: {
     name: string;

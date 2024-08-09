@@ -2,10 +2,11 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { Heading } from "./heading";
-import { ThemeToggle } from "./theme-toggle";
-import { UserMenuDropdown } from "./user-menu-dropdown";
-import { Button } from "./ui/button";
 import { NotificationsList } from "./notifications-list";
+import { QuickSearch } from "./quick-search";
+import { ThemeToggle } from "./theme-toggle";
+import { Button } from "./ui/button";
+import { UserMenuDropdown } from "./user-menu-dropdown";
 
 type Props = {
   title?: string;
@@ -23,6 +24,7 @@ export const Navbar = ({ title, description }: Props) => {
     <div className="z-50 rounded-md fixed px-8 flex h-16 items-center max-w-[calc(100vw-144px)] border-b-2 shadow-md w-full dark:bg-main-component bg-main-foreground">
       <Heading title={title} description={description} />
       <div className="flex items-center gap-4 ml-auto">
+        <QuickSearch />
         {!isRoot && (
           <Button
             variant={"outline"}

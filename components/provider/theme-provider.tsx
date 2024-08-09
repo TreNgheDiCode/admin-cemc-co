@@ -14,11 +14,6 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
 
   React.useEffect(() => {
     if (!user) return;
-    if (!token) {
-      toast.error(
-        "Không thể nhận thông báo. Vui lòng kiểm tra lại cài đặt thông báo trên trình duyệt của bạn."
-      );
-    }
 
     async function upsertToken() {
       if (token && user) {
@@ -27,10 +22,15 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
           toast.error(response.error);
         }
       }
+      if (!token) {
+        toast.error(
+          "Không thể nhận thông báo. Vui lòng kiểm tra lại cài đặt thông báo trên trình duyệt của bạn."
+        );
+      }
     }
 
     upsertToken();
-  }, [user]);
+  }, [user, token]);
 
   return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
 }

@@ -1,10 +1,12 @@
 import Loading from "@/components/loading";
-import { Navbar } from "@/components/navbar";
+import { SchoolGalleries } from "@/components/schools/school-galleries";
 import { SchoolInformation } from "@/components/schools/school-information";
+import { SchoolLocations } from "@/components/schools/school-locations";
+import { SchoolPrograms } from "@/components/schools/school-programs";
 import { SchoolTabs } from "@/components/schools/school-tabs";
+import { SchoolWrapper } from "@/components/schools/school-wrapper";
 import { StudentSchoolTable } from "@/components/tables/schools/student-school-table";
-import { GetSchoolInformation, GetSchools } from "@/data/schools";
-import { cn } from "@/lib/utils";
+import { GetSchools } from "@/data/schools";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
@@ -38,20 +40,14 @@ type TabItem = {
   content?: string | React.ReactNode | any;
 };
 
-const SchoolIdPage = async ({ params }: Props) => {
-  const school = await GetSchoolInformation(params.schoolId);
-
-  if (!school) {
-    redirect("/schools");
-  }
-
+const SchoolIdPage = ({ params }: Props) => {
   const tabs: TabItem[] = [
     {
       title: "Thông tin",
       value: "info",
       content: (
         <div className="w-full overflow-hidden relative h-full rounded-2xl shadow-md border">
-          <SchoolInformation school={school} />
+          <SchoolInformation schoolId={params.schoolId} />
         </div>
       ),
     },
@@ -60,9 +56,7 @@ const SchoolIdPage = async ({ params }: Props) => {
       value: "students",
       content: (
         <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold dark:text-main-foreground bg-main-foreground dark:bg-main-component">
-          <Suspense fallback={<Loading />}>
-            <StudentSchoolTable schoolId={params.schoolId} />
-          </Suspense>
+          <StudentSchoolTable schoolId={params.schoolId} />
         </div>
       ),
     },
@@ -70,8 +64,8 @@ const SchoolIdPage = async ({ params }: Props) => {
       title: "Cơ sở",
       value: "teachers",
       content: (
-        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold text-white bg-gradient-to-br from-purple-700 to-violet-900">
-          <p>Cơ sở</p>
+        <div className="w-full overflow-y-scroll relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold dark:text-main-foreground bg-main-foreground dark:bg-main-component">
+          <SchoolLocations schoolId={params.schoolId} />
         </div>
       ),
     },
@@ -79,8 +73,44 @@ const SchoolIdPage = async ({ params }: Props) => {
       title: "Chương trình đào tạo",
       value: "courses",
       content: (
-        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold text-white bg-gradient-to-br from-purple-700 to-violet-900">
-          <p>Chương trình đào tạo</p>
+        <div className="w-full overflow-y-scroll relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold dark:text-main-foreground bg-main-foreground dark:bg-main-component">
+          <SchoolPrograms schoolId={params.schoolId} />
+        </div>
+      ),
+    },
+    {
+      title: "Bộ sưu tập",
+      value: "galleries",
+      content: (
+        <div className="w-full overflow-y-scroll relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold dark:text-main-foreground bg-main-foreground dark:bg-main-component">
+          <SchoolGalleries schoolId={params.schoolId} />
+        </div>
+      ),
+    },
+    {
+      title: "Học bổng",
+      value: "scholarships",
+      content: (
+        <div className="w-full overflow-y-scroll relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold dark:text-main-foreground bg-main-foreground dark:bg-main-component">
+          Học bổng
+        </div>
+      ),
+    },
+    {
+      title: "Tin tức",
+      value: "news",
+      content: (
+        <div className="w-full overflow-y-scroll relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold dark:text-main-foreground bg-main-foreground dark:bg-main-component">
+          Tin tức
+        </div>
+      ),
+    },
+    {
+      title: "Phản hồi & Góp ý",
+      value: "supports",
+      content: (
+        <div className="w-full overflow-y-scroll relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold dark:text-main-foreground bg-main-foreground dark:bg-main-component">
+          Phản hồi & Góp ý
         </div>
       ),
     },
@@ -88,24 +118,11 @@ const SchoolIdPage = async ({ params }: Props) => {
 
   return (
     <>
-      <Navbar title={`Thông tin trường học`} description={school.name} />
-      {!school.isPublished && (
-        <div className="w-full h-16 bg-yellow-200 text-black flex items-center justify-center mt-20 mb-8">
-          <p className="text-center">
-            Trường học hiện đang ở ché độ{" "}
-            <strong className="text-rose-500">TẠM ẨN</strong>. Vui lòng đổi chế
-            độ để hiển thị trường.
-          </p>
-        </div>
-      )}
-      <div
-        className={cn(
-          "size-full [perspective:1000px] relative b flex flex-col mx-auto items-start justify-star",
-          school.isPublished && "pt-20"
-        )}
-      >
-        <SchoolTabs tabs={tabs} />
-      </div>
+      <Suspense fallback={<Loading />}>
+        <SchoolWrapper schoolId={params.schoolId}>
+          <SchoolTabs tabs={tabs} />
+        </SchoolWrapper>
+      </Suspense>
     </>
   );
 };
