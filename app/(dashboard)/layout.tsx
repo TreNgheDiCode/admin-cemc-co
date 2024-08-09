@@ -13,7 +13,7 @@ const DashboardLayout = ({ children }: Props) => {
   return (
     <div
       className={cn(
-        "rounded-md flex flex-col md:flex-row bg-gray-100 dark:bg-neutral-800 w-full flex-1 mx-auto"
+        "rounded-md flex flex-col md:flex-row bg-gray-100 dark:bg-neutral-800 w-full flex-1 mx-auto h-full"
       )}
     >
       <DashboardSidebar />

@@ -17,6 +17,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "./ui/accordion";
+import { QuickSearch } from "./quick-search";
 
 export function DashboardSidebar() {
   const [open, setOpen] = useState(false);
@@ -62,6 +63,9 @@ export function DashboardSidebar() {
               );
             })}
           </Accordion>
+          <div className="md:hidden">
+            <QuickSearch />
+          </div>
         </div>
       </SidebarBody>
     </Sidebar>

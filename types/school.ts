@@ -1,4 +1,6 @@
 import {
+  Feedback,
+  FeedbackReply,
   Gender,
   News,
   School,
@@ -13,6 +15,10 @@ import {
   Student,
 } from "@prisma/client";
 import { AccelerateInfo } from "@prisma/extension-accelerate";
+
+export type SchoolFeedbackReply = Feedback & {
+  replies: FeedbackReply[];
+}
 
 export type SchoolScholarshipLib = SchoolScholarship & {
   images: SchoolScholarshipImage[];

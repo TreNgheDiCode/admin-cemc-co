@@ -91,7 +91,7 @@ export const QuickSearch = () => {
           <span className="whitespace-nowrap group-hover:font-semibold transition">
             Tìm kiếm nhanh
           </span>
-          <kbd className="pointer-events-none  hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+          <kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
             <span className="text-xs">⌘</span>K
           </kbd>
         </div>
@@ -155,6 +155,12 @@ export const QuickSearch = () => {
                       <Button
                         size="sm"
                         onClick={() => {
+                          if (result.schoolSub && result.schoolSubId) {
+                            return router.push(
+                              `/${result.type}/${result.id}/${result.schoolSub}/${result.schoolSubId}`
+                            );
+                          }
+
                           router.push(`/${result.type}/${result.id}`);
                         }}
                         className="ml-auto bg-main hover:bg-main/70 dark:bg-main-component hover:dark:bg-main-component/70 text-white dark:text-main-foreground transition"

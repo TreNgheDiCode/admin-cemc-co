@@ -204,7 +204,7 @@ model School {
   galleries    SchoolGallery[]
   scholarships SchoolScholarship[]
   news         News[]
-  contacts     Contact[]
+  feedbacks    Feedback[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -214,7 +214,7 @@ model SchoolScholarship {
   id          String  @id @default(cuid())
   name        String
   description String
-  cover       String?
+  cover       String
   isPublished Boolean @default(false)
 
   schoolId String
@@ -767,7 +767,7 @@ model News {
   id String @id @default(cuid())
 
   title       String
-  content     String?
+  content     String
   type        NewsType
   cover       String
   isPublished Boolean  @default(true)
@@ -819,7 +819,7 @@ model StudentFollow {
   @@unique([studentId, followerId])
 }
 
-enum ContactTitle {
+enum FeedbackType {
   FEEDBACK
   SYSTEM
   REFUND
@@ -827,20 +827,50 @@ enum ContactTitle {
   SUBSCRIPTION
   SCHOLARSHIP
   PROCEDURE
+  GENERAL
+  UNKNOWN
+  QUESTION
 }
 
-model Contact {
+model Feedback {
   id String @id @default(cuid())
 
-  name    String
-  title   ContactTitle
-  phone   String
-  email   String
-  message String
-  isRead  Boolean      @default(false)
+  name       String
+  title      String
+  type       FeedbackType
+  phone      String?
+  email      String
+  message    String
+  image      String?
+  url        String?
+  isRead     Boolean      @default(false)
+  isSpam     Boolean      @default(false)
+  isResolved Boolean      @default(false)
 
   schoolId String?
   school   School? @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  replies FeedbackReply[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum FeedbackReplyRole {
+  ADMIN
+  USER
+}
+
+model FeedbackReply {
+  id String @id @default(cuid())
+
+  message    String
+  senderName String
+  logo       String?
+  role       FeedbackReplyRole
+
+  feedbackId String
+  feedback   Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

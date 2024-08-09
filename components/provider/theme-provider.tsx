@@ -22,11 +22,6 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
           toast.error(response.error);
         }
       }
-      if (!token) {
-        toast.error(
-          "Không thể nhận thông báo. Vui lòng kiểm tra lại cài đặt thông báo trên trình duyệt của bạn."
-        );
-      }
     }
 
     upsertToken();

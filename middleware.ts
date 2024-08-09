@@ -20,7 +20,6 @@ export default clerkMiddleware(
     if (!isPublicRoutes(req)) protect();
   },
   {
-    debug: true,
     clockSkewInMs: 30000,
   }
 );

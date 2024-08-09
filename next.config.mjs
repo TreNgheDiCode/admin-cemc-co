@@ -9,6 +9,7 @@ const nextConfig = {
         hostname: "files.edgestore.dev",
       },
       { hostname: "utfs.io" },
+      { hostname: "api.microlink.io" },
     ],
   },
 };

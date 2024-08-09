@@ -92,3 +92,19 @@ body,
 .rdp-dropdown_year > div {
   display: none;
 }
+
+.bn-container[data-theming-css-demo] {
+  min-height: 9.375rem;
+}
+
+.bn-container[data-theming-css-demo] .bn-editor {
+  background: transparent;
+}
+
+.bn-container[data-theming-css-demo] .bn-editor * {
+  color: black;
+}
+
+.dark .bn-container[data-theming-css-demo] .bn-editor * {
+  color: white;
+}

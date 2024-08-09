@@ -76,7 +76,7 @@ export const SidebarBody = (props: React.ComponentProps<typeof motion.div>) => {
       <DesktopSidebar {...props} className="h-screen" />
       <MobileSidebar
         {...(props as React.ComponentProps<"div">)}
-        className="h-screen"
+        className="h-screen overflow-y-scroll"
       />
     </>
   );
@@ -122,7 +122,7 @@ export const MobileSidebar = ({
         )}
         {...props}
       >
-        <div className="flex justify-end mt-10 z-20 w-full">
+        <div className="flex justify-end z-20 w-full">
           <IconMenu2
             className="text-neutral-800 dark:text-neutral-200"
             onClick={() => setOpen(!open)}
@@ -144,7 +144,7 @@ export const MobileSidebar = ({
               )}
             >
               <div
-                className="absolute right-10 top-10 z-50 text-neutral-800 dark:text-neutral-200"
+                className="absolute right-4 top-4 z-50 text-neutral-800 dark:text-neutral-200"
                 onClick={() => setOpen(!open)}
               >
                 <IconX />

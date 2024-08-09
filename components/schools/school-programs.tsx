@@ -12,7 +12,7 @@ export const SchoolPrograms = async ({ schoolId }: Props) => {
     <SchoolProgramsList programs={programs} schoolId={schoolId} />
   ) : (
     <div className="text-main dark:text-main-foreground text-2xl">
-      Danh sách cơ sở trống
+      Danh sách chương trình đào tạo trống
     </div>
   );
 };

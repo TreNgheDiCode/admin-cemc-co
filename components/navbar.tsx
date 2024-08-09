@@ -13,6 +13,17 @@ type Props = {
   description?: string;
 };
 
+if (process.env.NODE_ENV !== "production") {
+  const originalWarn = console.warn;
+  console.warn = (...args) => {
+    // Check if the warning message contains specific text or condition
+    if (args[0].includes("Skipping auto-scroll behavior")) {
+      return; // Suppress the warning
+    }
+    originalWarn.apply(console, args); // Otherwise, log the warning
+  };
+}
+
 export const Navbar = ({ title, description }: Props) => {
   const pathname = usePathname();
   const router = useRouter();
@@ -21,25 +32,28 @@ export const Navbar = ({ title, description }: Props) => {
   const isRoot = pathname.split("/").length === 2;
 
   return (
-    <div className="z-50 rounded-md fixed px-8 flex h-16 items-center max-w-[calc(100vw-144px)] border-b-2 shadow-md w-full dark:bg-main-component bg-main-foreground">
-      <Heading title={title} description={description} />
-      <div className="flex items-center gap-4 ml-auto">
-        <QuickSearch />
-        {!isRoot && (
-          <Button
-            variant={"outline"}
-            size={"sm"}
-            onClick={() => {
-              router.push("/" + pathname.split("/")[1]);
-            }}
-          >
-            Quay về trang chính
-          </Button>
-        )}
-        <NotificationsList />
-        <ThemeToggle />
-        <UserMenuDropdown />
+    <>
+      {/*  */}
+      <div className="z-50 rounded-md fixed px-8 flex h-16 items-center lg:max-w-[calc(100vw-144px)] border-b-2 shadow-md w-[98vw] dark:bg-main-component bg-main-foreground">
+        <Heading title={title} description={description} />
+        <div className="items-center gap-4 ml-auto hidden lg:flex">
+          <QuickSearch />
+          {!isRoot && (
+            <Button
+              variant={"outline"}
+              size={"sm"}
+              onClick={() => {
+                router.push("/" + pathname.split("/")[1]);
+              }}
+            >
+              Quay về trang chính
+            </Button>
+          )}
+          <NotificationsList />
+          <ThemeToggle />
+          <UserMenuDropdown />
+        </div>
       </div>
-    </div>
+    </>
   );
 };

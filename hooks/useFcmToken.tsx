@@ -61,6 +61,9 @@ const useFcmToken = () => {
     // This step is typical initially as the service worker may not be ready/installed yet.
     if (!token) {
       if (retryLoadToken.current >= 3) {
+        toast.error(
+          "Không thể nhận thông báo. Vui lòng kiểm tra lại cài đặt thông báo trên trình duyệt của bạn."
+        );
         alert("Unable to load token, refresh the browser");
         console.info(
           "%cPush Notifications issue - unable to load token after 3 retries",

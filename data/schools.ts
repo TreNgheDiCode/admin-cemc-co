@@ -290,3 +290,46 @@ export const GetSchoolScholarships = async (schoolId: string) => {
     return [];
   }
 };
+
+export const GetSchoolNews = async (schoolId: string) => {
+  try {
+    const news = await db.news.findMany({
+      where: {
+        schoolId,
+      },
+      cacheStrategy: {
+        swr: 60,
+        ttl: 300,
+      },
+    });
+
+    return news;
+  } catch (error) {
+    console.log("GET SCHOOL NEWS DATA ERROR", error);
+
+    return [];
+  }
+};
+
+export const GetSchoolFeedbacks = async (schoolId: string) => {
+  try {
+    const feedbacks = await db.feedback.findMany({
+      where: {
+        schoolId,
+      },
+      include: {
+        replies: {
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
+      },
+    });
+
+    return feedbacks;
+  } catch (error) {
+    console.log("GET SCHOOL FEEDBACKS DATA ERROR", error);
+
+    return [];
+  }
+};

@@ -4,11 +4,14 @@ import { EdgeStoreProvider } from "@/lib/edgestore";
 import { viVN } from "@clerk/localizations";
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
-import { Lusitana } from "next/font/google";
+import { Lusitana, Merriweather } from "next/font/google";
 import "./globals.css";
 import { NextUIProvider } from "@nextui-org/system";
+import { cn } from "@/lib/utils";
+import "@blocknote/core/fonts/inter.css";
+import "@blocknote/mantine/style.css";
 
-const lusitana = Lusitana({ weight: ["400"], subsets: ["latin"] });
+const lusitana = Merriweather({ weight: ["400"], subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -38,7 +41,12 @@ export default function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
-              <NextUIProvider className="size-full min-h-screen">
+              <NextUIProvider
+                className={cn(
+                  "size-full min-h-screen antialiased",
+                  lusitana.className
+                )}
+              >
                 {children}
               </NextUIProvider>
             </ThemeProvider>
