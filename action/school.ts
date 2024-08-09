@@ -146,11 +146,12 @@ export const CreateSchool = async (values: CreateSchoolFormValues) => {
     // Create school programs
     await Promise.all(
       data.programs.map(async (program) => {
-        const { description, name } = program;
+        const { description, name, cover } = program;
 
         const newProgram = await db.schoolProgram.create({
           data: {
             description,
+            cover,
             name,
             schoolId: school.id,
           },
@@ -176,11 +177,12 @@ export const CreateSchool = async (values: CreateSchoolFormValues) => {
     if (data.galleries)
       await Promise.all(
         data.galleries.map(async (gallery) => {
-          const { description, images, name } = gallery;
+          const { description, images, name, cover } = gallery;
 
           const newGallery = await db.schoolGallery.create({
             data: {
               description,
+              cover,
               name,
               schoolId: school.id,
             },

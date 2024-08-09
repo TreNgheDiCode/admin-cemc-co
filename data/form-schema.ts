@@ -1,4 +1,5 @@
 import { Country } from "@prisma/client";
+import { de } from "date-fns/locale";
 import * as z from "zod";
 
 export const SchoolInformationSchema = z.object({
@@ -35,14 +36,15 @@ export const SchoolLocationSchema = z.object({
     .string({
       required_error: "Ảnh bìa không được để trống",
     })
-    .min(3, {
+    .min(1, {
       message: "Ảnh bìa không được để trống",
     }),
-  name: z.string().min(3, {
-    message: "Tên cơ sở phải có ít nhất 3 ký tự",
+  name: z.string().min(1, {
+    message: "Tên cơ sở không được để trống",
   }),
-  address: z.string().min(3, {
-    message: "Địa chỉ phải có ít nhất 3 ký tự",
+  description: z.optional(z.string()),
+  address: z.string().min(1, {
+    message: "Địa chỉ cơ sở không được để trống",
   }),
   isMain: z.boolean(),
   images: z.optional(z.array(z.string())),
@@ -50,35 +52,40 @@ export const SchoolLocationSchema = z.object({
 });
 
 export const SchoolProgramSchema = z.object({
-  name: z.string().min(3, {
-    message: "Tên chương trình đào tạo phải có ít nhất 3 ký tự",
+  name: z.string().min(1, {
+    message: "Tên chương trình đào tạo không được để trống",
   }),
-  description: z.string().min(3, {
-    message: "Mô tả chương trình đào tạo phải có ít nhất 3 ký tự",
+  description: z.string().min(1, {
+    message: "Mô tả chương trình đào tạo không được để trống",
   }),
-  cover: z.string({
-    required_error: "Ảnh bìa không được để trống",
+  cover: z.string().min(1, {
+    message: "Ảnh đại diện không được để trống",
   }),
   images: z.optional(z.array(z.string())),
 });
 
 export const SchoolGallerySchema = z.object({
-  name: z.string().min(3, {
-    message: "Tên bộ sưu tập phải có ít nhất 3 ký tự",
+  name: z.string().min(1, {
+    message: "Tên bộ sưu tập không được để trống",
   }),
-  description: z.optional(z.string()),
+  cover: z.string().min(1, {
+    message: "Ảnh đại diện không được để trống",
+  }),
+  description: z.string().min(1, {
+    message: "Mô tả bộ sưu tập không được để trống",
+  }),
   images: z.optional(z.array(z.string())),
 });
 
 export const SchoolScholarshipSchema = z.object({
-  name: z.string().min(3, {
-    message: "Tên học bổng phải có ít nhất 3 ký tự",
+  name: z.string().min(1, {
+    message: "Tên học bổng không được để trống",
   }),
-  description: z.string().min(3, {
-    message: "Mô tả học bổng phải có ít nhất 3 ký tự",
+  description: z.string().min(1, {
+    message: "Mô tả học bổng không được để trống",
   }),
-  cover: z.string({
-    required_error: "Ảnh đại diện không được để trống",
+  cover: z.string().min(1, {
+    message: "Ảnh đại diện không được để trống",
   }),
   images: z.optional(z.array(z.string())),
 });

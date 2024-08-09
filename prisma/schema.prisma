@@ -330,7 +330,7 @@ model SchoolProgram {
   id          String  @id @default(cuid())
   name        String
   description String
-  cover       String?
+  cover       String
   isPublished Boolean @default(false)
 
   schoolId String

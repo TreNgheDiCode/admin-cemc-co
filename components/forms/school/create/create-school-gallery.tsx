@@ -133,6 +133,7 @@ export const CreateSchoolGallery = ({
           onClick={() => {
             append({
               name: "",
+              cover: "",
               description: "",
             });
           }}
