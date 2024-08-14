@@ -46,7 +46,7 @@ export const CreateSchoolProgram = ({
   });
 
   const buttonClass =
-    "bg-main dark:bg-main-component text-white dark:text-main-foreground";
+    "bg-main dark:bg-main-component text-white dark:text-main-foreground hover:bg-main/70 dark:hover:bg-main-component/70";
 
   return (
     <>
@@ -77,15 +77,13 @@ export const CreateSchoolProgram = ({
             </AccordionTrigger>
             <AccordionContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="size-full">
-                  <ManageSchoolProgramCover
-                    control={control}
-                    programIndex={index}
-                    setValue={setValue}
-                    getValues={getValues}
-                    btnClass={buttonClass}
-                  />
-                </div>
+                <ManageSchoolProgramCover
+                  control={control}
+                  programIndex={index}
+                  setValue={setValue}
+                  getValues={getValues}
+                  btnClass={buttonClass}
+                />
                 <div className="size-full space-y-4">
                   <FormField
                     control={control}

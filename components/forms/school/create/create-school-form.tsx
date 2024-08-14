@@ -17,6 +17,7 @@ import { CreateSchoolScholarship } from "./create-school-scholarship";
 import { CreateSchoolPreview } from "./create-school-preview";
 import { Country } from "@prisma/client";
 import { CreateSchool } from "@/action/school";
+import { useDisableComponents } from "@/hooks/use-disable-components";
 
 export const CreateSchoolForm = () => {
   const [loading, setLoading] = useState(false);
@@ -167,6 +168,8 @@ export const CreateSchoolForm = () => {
     }
   };
 
+  const { isDisabled } = useDisableComponents();
+
   return (
     <div className="size-full">
       <ul className="flex gap-4">
@@ -253,7 +256,7 @@ export const CreateSchoolForm = () => {
             <button
               type="button"
               onClick={prev}
-              disabled={currentStep === 0}
+              disabled={currentStep === 0 || isDisabled || loading}
               className="rounded bg-white dark:bg-main-component px-2 py-1 text-sm font-semibold text-main/90 dark:text-main-foreground/90 shadow-sm ring-1 ring-inset ring-main/30 dark:ring-main-foreground/30 hover:bg-main/5 dark:hover:bg-main-foreground/5 disabled:cursor-not-allowed disabled:opacity-50 flex items-center gap-x-2"
             >
               <ChevronLeft />
@@ -277,7 +280,9 @@ export const CreateSchoolForm = () => {
             <button
               type="button"
               onClick={next}
-              disabled={currentStep === steps.length - 1 || loading}
+              disabled={
+                currentStep === steps.length - 1 || loading || isDisabled
+              }
               className="rounded bg-white dark:bg-main-component px-2 py-1 text-sm font-semibold text-main/90 dark:text-main-foreground/90 shadow-sm ring-1 ring-inset  ring-main/30 dark:ring-main-foreground/30 hover:bg-main/5 dark:hover:bg-main-foreground/5 disabled:cursor-not-allowed disabled:opacity-50 flex items-center gap-x-2"
             >
               Tiếp theo

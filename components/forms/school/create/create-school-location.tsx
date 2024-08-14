@@ -29,6 +29,7 @@ import {
 import { ManageLocationContacts } from "./manage-location-contacts";
 import { ManageSchoolLocationCover } from "./manage-school-location-cover";
 import { ManageSchoolLocationImages } from "./manage-school-location-images";
+import { Textarea } from "@/components/ui/textarea";
 
 type Props = {
   control: Control<CreateSchoolFormValues>;
@@ -91,7 +92,7 @@ export const CreateSchoolLocation = ({
                     setValue={setValue}
                     btnClass={buttonClass}
                   />
-                  <div className="space-y-4 size-ful">
+                  <div className="space-y-4 size-full">
                     <FormField
                       control={control}
                       name={`locations.${index}.name`}
@@ -124,6 +125,25 @@ export const CreateSchoolLocation = ({
                               disabled={control._formState.isSubmitting}
                               {...field}
                               placeholder="Nhập địa chỉ cơ sở"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={control}
+                      name={`locations.${index}.description`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-main dark:text-main-foreground">
+                            Mô tả
+                          </FormLabel>
+                          <FormControl>
+                            <Textarea
+                              disabled={control._formState.isSubmitting}
+                              {...field}
+                              placeholder="Nhập mô tả"
                             />
                           </FormControl>
                           <FormMessage />

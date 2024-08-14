@@ -26,6 +26,7 @@ import {
   UseFormSetValue,
 } from "react-hook-form";
 import { ManageSchoolGalleryImages } from "./manage-school-gallery-images";
+import { ManageSchoolGalleryCover } from "./manage-school-gallery-cover";
 
 type Props = {
   control: Control<CreateSchoolFormValues>;
@@ -76,44 +77,52 @@ export const CreateSchoolGallery = ({
             </AccordionTrigger>
             <AccordionContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
+                <ManageSchoolGalleryCover
                   control={control}
-                  name={`galleries.${index}.name`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-main dark:text-main-foreground">
-                        Tên bộ sưu tập
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          disabled={control._formState.isSubmitting}
-                          {...field}
-                          placeholder="Nhập tên bộ sưu tập"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  galleryIndex={index}
+                  setValue={setValue}
+                  btnClass={buttonClass}
                 />
-                <FormField
-                  control={control}
-                  name={`galleries.${index}.description`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-main dark:text-main-foreground">
-                        Mô tả
-                      </FormLabel>
-                      <FormControl>
-                        <Textarea
-                          disabled={control._formState.isSubmitting}
-                          {...field}
-                          placeholder="Nhập mô tả"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="size-full space-y-4">
+                  <FormField
+                    control={control}
+                    name={`galleries.${index}.name`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-main dark:text-main-foreground">
+                          Tên bộ sưu tập
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            disabled={control._formState.isSubmitting}
+                            {...field}
+                            placeholder="Nhập tên bộ sưu tập"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={control}
+                    name={`galleries.${index}.description`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-main dark:text-main-foreground">
+                          Mô tả
+                        </FormLabel>
+                        <FormControl>
+                          <Textarea
+                            disabled={control._formState.isSubmitting}
+                            {...field}
+                            placeholder="Nhập mô tả"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 <ManageSchoolGalleryImages
                   control={control}
                   setValue={setValue}

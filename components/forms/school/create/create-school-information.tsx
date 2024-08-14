@@ -22,12 +22,18 @@ import { CreateSchoolFormValues } from "@/data/form-schema";
 import { useEdgeStore } from "@/lib/edgestore";
 import { SingleFileDropzone } from "@/types/generic";
 import Image from "next/image";
-import { useState } from "react";
-import { Control, FieldErrors, UseFormSetValue } from "react-hook-form";
+import { useEffect, useState } from "react";
+import {
+  Control,
+  FieldErrors,
+  UseFormSetValue,
+  UseFormWatch,
+} from "react-hook-form";
 import { toast } from "sonner";
 import { BackgroundDropzone } from "../background-dropzone";
 import { SchoolColorPicker } from "../color-picker";
 import { LogoDropzone } from "../logo-dropzone";
+import { useDisableComponents } from "@/hooks/use-disable-components";
 
 type Props = {
   control: Control<CreateSchoolFormValues>;
@@ -47,11 +53,13 @@ export const CreateSchoolInformation = ({
   >();
   const [uploadingBackground, setUploadingBackground] = useState(false);
   const { edgestore } = useEdgeStore();
+  const { toggleDisabled } = useDisableComponents();
 
   const onSelectedLogo = async (value?: SingleFileDropzone) => {
     if (value?.file && value.file instanceof File) {
       setLogo(value);
       setUploadingLogo(true);
+      toggleDisabled();
       try {
         await edgestore.publicFiles
           .upload({
@@ -70,13 +78,11 @@ export const CreateSchoolInformation = ({
           });
       } catch (error) {
         console.error(error);
-
         setLogo(undefined);
-        setUploadingLogo(false);
-
         toast.error("Có lỗi xảy ra khi tải ảnh lên");
       } finally {
         setUploadingLogo(false);
+        toggleDisabled();
       }
     }
   };
@@ -85,6 +91,7 @@ export const CreateSchoolInformation = ({
     if (value?.file && value.file instanceof File) {
       setBackground(value);
       setUploadingBackground(true);
+      toggleDisabled();
       try {
         await edgestore.publicFiles
           .upload({
@@ -103,67 +110,70 @@ export const CreateSchoolInformation = ({
           });
       } catch (error) {
         console.error(error);
-
         setBackground(undefined);
-        setUploadingBackground(false);
-
         toast.error("Có lỗi xảy ra khi tải ảnh lên");
       } finally {
         setUploadingBackground(false);
+        toggleDisabled();
       }
     }
   };
 
   const buttonClass =
-    "bg-main text-white dark:bg-main-component dark:text-main-foreground";
+    "bg-main hover:bg-main/70 text-white dark:bg-main-component hover:dark:bg-main-component/70 dark:text-main-foreground";
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <FormField
         control={control}
         name="background"
-        render={({ field }) => (
-          <FormItem className="col-span-1 md:col-span-2 flex flex-col gap-2">
-            <FormLabel className="text-main dark:text-main-foreground">
-              Ảnh bìa
-            </FormLabel>
-            {uploadingBackground ? (
-              <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-main/90 dark:border-main-foreground/90"></div>
-              </div>
-            ) : (
-              <FormControl>
-                <BackgroundDropzone
+        render={({ field }) => {
+          console.log(field.value);
+          return (
+            <FormItem className="col-span-1 md:col-span-2 flex flex-col gap-2">
+              <FormLabel className="text-main dark:text-main-foreground">
+                Ảnh bìa
+              </FormLabel>
+              {uploadingBackground ? (
+                <div className="flex items-center justify-center h-64">
+                  <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-main/90 dark:border-main-foreground/90"></div>
+                </div>
+              ) : (
+                <FormControl>
+                  <BackgroundDropzone
+                    disabled={
+                      control._formState.isSubmitting || uploadingBackground
+                    }
+                    value={
+                      { file: field.value || background?.file } ?? background
+                    }
+                    onChange={(file) => {
+                      if (file) {
+                        onSelectedBackground({ file });
+                      }
+                    }}
+                  />
+                </FormControl>
+              )}
+              {field.value && (
+                <Button
                   disabled={
                     control._formState.isSubmitting || uploadingBackground
                   }
-                  value={{ file: field.value } || background}
-                  onChange={(file) => {
-                    if (file) {
-                      onSelectedBackground({ file });
-                    }
+                  size="sm"
+                  onClick={() => {
+                    field.onChange("");
+                    setBackground(undefined);
                   }}
-                />
-              </FormControl>
-            )}
-            {field.value && (
-              <Button
-                disabled={
-                  control._formState.isSubmitting || uploadingBackground
-                }
-                size="sm"
-                onClick={() => {
-                  field.onChange(undefined);
-                  setBackground(undefined);
-                }}
-                className={buttonClass}
-              >
-                Xóa ảnh bìa
-              </Button>
-            )}
-            <FormMessage />
-          </FormItem>
-        )}
+                  className={buttonClass}
+                >
+                  Xóa ảnh bìa
+                </Button>
+              )}
+              <FormMessage />
+            </FormItem>
+          );
+        }}
       />
       <div className="size-full">
         <FormField
@@ -193,7 +203,7 @@ export const CreateSchoolInformation = ({
                       variant="outline"
                       size="sm"
                       onClick={() => {
-                        field.onChange(undefined);
+                        field.onChange("");
                         setLogo(undefined);
                       }}
                       className={buttonClass}
@@ -206,7 +216,7 @@ export const CreateSchoolInformation = ({
                 <FormControl>
                   <LogoDropzone
                     disabled={control._formState.isSubmitting || uploadingLogo}
-                    value={{ file: field.value } || logo}
+                    value={{ file: logo?.file || field.value } ?? logo}
                     onChange={(file) => {
                       if (file) {
                         onSelectedLogo({ file });

@@ -48,7 +48,7 @@ export function NotificationsList() {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="max-h-[70vh] overflow-y-scroll"
+        className="max-h-[70vh] overflow-y-scroll max-w-xl"
       >
         {notifications?.length === 0 ? (
           <DropdownMenuItem disabled>Không có thông báo mới</DropdownMenuItem>
@@ -60,7 +60,7 @@ export function NotificationsList() {
             const minutesAgo = differenceInMinutes(now, n.createdAt);
             return (
               <DropdownMenuItem key={n.id}>
-                <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center justify-between gap-4 w-full">
                   <div className="flex flex-col gap-2 flex-1">
                     <span className="text-xs font-medium text-main dark:text-main-foreground">
                       {n.title}

@@ -77,15 +77,13 @@ export const CreateSchoolScholarship = ({
             </AccordionTrigger>
             <AccordionContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="size-full">
-                  <ManageSchoolScholarshipCover
-                    control={control}
-                    setValue={setValue}
-                    getValues={getValues}
-                    scholarshipIndex={index}
-                    btnClass={buttonClass}
-                  />
-                </div>
+                <ManageSchoolScholarshipCover
+                  control={control}
+                  setValue={setValue}
+                  getValues={getValues}
+                  scholarshipIndex={index}
+                  btnClass={buttonClass}
+                />
                 <div className="size-full space-y-4">
                   <FormField
                     control={control}

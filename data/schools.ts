@@ -127,10 +127,6 @@ export const GetSchoolWrapper = async (schoolId: string) => {
         isPublished: true,
         name: true,
       },
-      cacheStrategy: {
-        swr: 300,
-        ttl: 3600,
-      },
     });
 
     return school;

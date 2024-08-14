@@ -15,6 +15,7 @@ import { useState } from "react";
 import { Control, UseFormGetValues, UseFormSetValue } from "react-hook-form";
 import { toast } from "sonner";
 import { MultiImageDropzone } from "../multi-image-dropzone";
+import { useDisableComponents } from "@/hooks/use-disable-components";
 
 type Props = {
   locationIndex: number;
@@ -34,6 +35,7 @@ export const ManageSchoolLocationImages = ({
   const [images, setImages] = useState<SingleFileDropzone[]>();
   const [uploadingImages, setUploadingImages] = useState(false);
   const { edgestore } = useEdgeStore();
+  const { isDisabled, toggleDisabled } = useDisableComponents();
 
   const onChangeImages = async (
     index: number,
@@ -42,6 +44,7 @@ export const ManageSchoolLocationImages = ({
     if (value) {
       setImages(value);
       setUploadingImages(true);
+      toggleDisabled();
       try {
         await Promise.all(
           value.map((file) => {
@@ -69,6 +72,7 @@ export const ManageSchoolLocationImages = ({
               })
               .finally(() => {
                 setUploadingImages(false);
+                toggleDisabled();
               });
           })
         );
@@ -80,6 +84,10 @@ export const ManageSchoolLocationImages = ({
 
         toast.error("Có lỗi xảy ra khi tải ảnh lên");
       }
+    }
+
+    if (isDisabled) {
+      toggleDisabled;
     }
   };
 
@@ -102,42 +110,44 @@ export const ManageSchoolLocationImages = ({
     <FormField
       control={control}
       name={`locations.${locationIndex}.images`}
-      render={({ field }) => (
-        <FormItem className="col-span-1 md:col-span-2">
-          <FormLabel className="text-main dark:text-main-foreground">
-            Hình ảnh cơ sở (tùy chọn)
-          </FormLabel>
-          <FormControl>
-            <MultiImageDropzone
-              disabled={control._formState.isSubmitting || uploadingImages}
-              onChange={(files) => {
-                onChangeImages(locationIndex, files);
-              }}
-              value={
-                (field.value &&
-                  field.value.map((image) => {
-                    return { file: image };
-                  })) ||
-                images
-              }
-            />
-          </FormControl>
-          {field.value && (
-            <Button
-              disabled={control._formState.isSubmitting || uploadingImages}
-              size="sm"
-              onClick={() => {
-                field.onChange([]);
-                setImages([]);
-              }}
-              className={btnClass}
-            >
-              Xóa tất cả hình ảnh
-            </Button>
-          )}
-          <FormMessage />
-        </FormItem>
-      )}
+      render={({ field }) => {
+        return (
+          <FormItem className="col-span-1 md:col-span-2">
+            <FormLabel className="text-main dark:text-main-foreground">
+              Hình ảnh cơ sở (tùy chọn)
+            </FormLabel>
+            <FormControl>
+              <MultiImageDropzone
+                disabled={control._formState.isSubmitting || uploadingImages}
+                onChange={(files) => {
+                  onChangeImages(locationIndex, files);
+                }}
+                value={
+                  field.value !== undefined && field.value.length !== 0
+                    ? field.value.map((url) => ({ file: url }))
+                    : images?.length !== 0
+                    ? images
+                    : undefined
+                }
+              />
+            </FormControl>
+            {field.value?.length !== 0 && (
+              <Button
+                disabled={control._formState.isSubmitting || uploadingImages}
+                size="sm"
+                onClick={() => {
+                  field.onChange([]);
+                  setImages([]);
+                }}
+                className={btnClass}
+              >
+                Xóa tất cả hình ảnh
+              </Button>
+            )}
+            <FormMessage />
+          </FormItem>
+        );
+      }}
     />
   );
 };

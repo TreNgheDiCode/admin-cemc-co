@@ -14,7 +14,8 @@ import { SingleFileDropzone } from "@/types/generic";
 import { useState } from "react";
 import { Control, UseFormGetValues, UseFormSetValue } from "react-hook-form";
 import { toast } from "sonner";
-import { LogoDropzone } from "../logo-dropzone";
+import { BackgroundDropzone } from "../background-dropzone";
+import { useDisableComponents } from "@/hooks/use-disable-components";
 
 type Props = {
   programIndex: number;
@@ -34,11 +35,13 @@ export const ManageSchoolProgramCover = ({
   const { edgestore } = useEdgeStore();
   const [cover, setCover] = useState<SingleFileDropzone>();
   const [uploadingCover, setUploadingCover] = useState(false);
+  const { isDisabled, toggleDisabled } = useDisableComponents();
 
   const onSelectedCover = async (index: number, value?: SingleFileDropzone) => {
     if (value?.file && value.file instanceof File) {
       setCover(value);
       setUploadingCover(true);
+      toggleDisabled();
       try {
         await edgestore.publicFiles
           .upload({
@@ -55,7 +58,10 @@ export const ManageSchoolProgramCover = ({
               setCover(undefined);
             }
           })
-          .finally(() => setUploadingCover(false));
+          .finally(() => {
+            setUploadingCover(false);
+            toggleDisabled();
+          });
       } catch (error) {
         console.error(error);
 
@@ -64,6 +70,10 @@ export const ManageSchoolProgramCover = ({
 
         toast.error("Có lỗi xảy ra khi tải ảnh lên");
       }
+    }
+
+    if (isDisabled) {
+      toggleDisabled();
     }
   };
 
@@ -74,7 +84,7 @@ export const ManageSchoolProgramCover = ({
       render={({ field }) => (
         <FormItem className="flex flex-col gap-2">
           <FormLabel className="text-main dark:text-main-foreground">
-            Ảnh đại diện
+            Ảnh bìa chương trình đào tạo
           </FormLabel>
           {uploadingCover ? (
             <div className="flex items-center justify-center h-64">
@@ -82,7 +92,7 @@ export const ManageSchoolProgramCover = ({
             </div>
           ) : (
             <FormControl>
-              <LogoDropzone
+              <BackgroundDropzone
                 disabled={control._formState.isSubmitting || uploadingCover}
                 value={{ file: field.value } || cover}
                 onChange={(file) => {
@@ -98,7 +108,7 @@ export const ManageSchoolProgramCover = ({
               disabled={control._formState.isSubmitting || uploadingCover}
               size="sm"
               onClick={() => {
-                field.onChange(undefined);
+                field.onChange("");
                 setCover(undefined);
               }}
               className={btnClass}

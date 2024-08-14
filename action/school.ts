@@ -101,7 +101,7 @@ export const CreateSchool = async (values: CreateSchoolFormValues) => {
     // Create school locations
     await Promise.all(
       data.locations.map(async (location) => {
-        const { address, cover, isMain, name } = location;
+        const { address, cover, isMain, name, description } = location;
 
         const newLocation = await db.schoolLocation.create({
           data: {
@@ -109,6 +109,7 @@ export const CreateSchool = async (values: CreateSchoolFormValues) => {
             cover,
             isMain,
             name,
+            description,
             schoolId: school.id,
           },
         });

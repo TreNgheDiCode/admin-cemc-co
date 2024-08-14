@@ -1,5 +1,4 @@
 import { Country } from "@prisma/client";
-import { de } from "date-fns/locale";
 import * as z from "zod";
 
 export const SchoolInformationSchema = z.object({
@@ -124,3 +123,16 @@ export const CreateSchoolSchema = z.object({
 });
 
 export type CreateSchoolFormValues = z.infer<typeof CreateSchoolSchema>;
+
+export const ChatSupportSchema = z.object({
+  userId: z.optional(z.string()),
+  name: z.optional(z.string()),
+  email: z.optional(z.string()),
+  phone: z.optional(z.string()),
+  clientId: z.optional(z.string()),
+  message: z.string().min(1, {
+    message: "Tin nhắn không được để trống",
+  }),
+});
+
+export type ChatSupportFormValues = z.infer<typeof ChatSupportSchema>;

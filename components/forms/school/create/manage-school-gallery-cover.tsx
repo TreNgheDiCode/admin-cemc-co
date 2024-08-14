@@ -18,23 +18,21 @@ import { BackgroundDropzone } from "../background-dropzone";
 import { useDisableComponents } from "@/hooks/use-disable-components";
 
 type Props = {
-  locationIndex: number;
+  galleryIndex: number;
   control: Control<CreateSchoolFormValues>;
   setValue: UseFormSetValue<CreateSchoolFormValues>;
-  getValues: UseFormGetValues<CreateSchoolFormValues>;
   btnClass?: string;
 };
 
-export const ManageSchoolLocationCover = ({
-  locationIndex,
+export const ManageSchoolGalleryCover = ({
+  galleryIndex,
   control,
   setValue,
-  getValues,
   btnClass,
 }: Props) => {
+  const { edgestore } = useEdgeStore();
   const [cover, setCover] = useState<SingleFileDropzone>();
   const [uploadingCover, setUploadingCover] = useState(false);
-  const { edgestore } = useEdgeStore();
   const { isDisabled, toggleDisabled } = useDisableComponents();
 
   const onSelectedCover = async (index: number, value?: SingleFileDropzone) => {
@@ -50,7 +48,7 @@ export const ManageSchoolLocationCover = ({
           .then((res) => {
             if (res.url) {
               setCover({ file: res.url });
-              setValue(`locations.${index}.cover`, res.url);
+              setValue(`galleries.${index}.cover`, res.url);
             }
             if (!res.url) {
               toast.error("Có lỗi xảy ra khi tải ảnh lên");
@@ -80,11 +78,11 @@ export const ManageSchoolLocationCover = ({
   return (
     <FormField
       control={control}
-      name={`locations.${locationIndex}.cover`}
+      name={`galleries.${galleryIndex}.cover`}
       render={({ field }) => (
         <FormItem className="flex flex-col gap-2">
           <FormLabel className="text-main dark:text-main-foreground">
-            Ảnh bìa cơ sở
+            Ảnh bìa bộ sưu tập
           </FormLabel>
           {uploadingCover ? (
             <div className="flex items-center justify-center h-64">
@@ -97,7 +95,7 @@ export const ManageSchoolLocationCover = ({
                 value={{ file: field.value } || cover}
                 onChange={(file) => {
                   if (file) {
-                    onSelectedCover(locationIndex, { file });
+                    onSelectedCover(galleryIndex, { file });
                   }
                 }}
               />

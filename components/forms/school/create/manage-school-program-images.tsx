@@ -11,10 +11,11 @@ import {
 import { CreateSchoolFormValues } from "@/data/form-schema";
 import { useEdgeStore } from "@/lib/edgestore";
 import { SingleFileDropzone } from "@/types/generic";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Control, UseFormGetValues, UseFormSetValue } from "react-hook-form";
 import { toast } from "sonner";
 import { MultiImageDropzone } from "../multi-image-dropzone";
+import { useDisableComponents } from "@/hooks/use-disable-components";
 
 type Props = {
   programIndex: number;
@@ -34,6 +35,7 @@ export const ManageSchoolProgramImages = ({
   const [images, setImages] = useState<SingleFileDropzone[]>();
   const [uploadingImages, setUploadingImages] = useState(false);
   const { edgestore } = useEdgeStore();
+  const { toggleDisabled, isDisabled } = useDisableComponents();
 
   const onChangeImages = async (
     index: number,
@@ -42,6 +44,7 @@ export const ManageSchoolProgramImages = ({
     if (value) {
       setImages(value);
       setUploadingImages(true);
+      toggleDisabled();
       try {
         await Promise.all(
           value.map((file) => {
@@ -69,6 +72,9 @@ export const ManageSchoolProgramImages = ({
               })
               .finally(() => {
                 setUploadingImages(false);
+                if (isDisabled) {
+                  toggleDisabled;
+                }
               });
           })
         );
@@ -82,6 +88,12 @@ export const ManageSchoolProgramImages = ({
       }
     }
   };
+
+  useEffect(() => {
+    if (!uploadingImages && isDisabled) {
+      toggleDisabled();
+    }
+  }, [uploadingImages, isDisabled, toggleDisabled]);
 
   const uploadImageProgress = (progress: SingleFileDropzone["progress"]) => {
     setImages((prev) =>
@@ -114,15 +126,15 @@ export const ManageSchoolProgramImages = ({
                 onChangeImages(programIndex, files);
               }}
               value={
-                (field.value &&
-                  field.value.map((image) => {
-                    return { file: image };
-                  })) ||
-                images
+                field.value !== undefined && field.value.length !== 0
+                  ? field.value.map((url) => ({ file: url }))
+                  : images?.length !== 0
+                  ? images
+                  : undefined
               }
             />
           </FormControl>
-          {field.value && (
+          {field.value?.length !== 0 && (
             <Button
               disabled={control._formState.isSubmitting || uploadingImages}
               size="sm"

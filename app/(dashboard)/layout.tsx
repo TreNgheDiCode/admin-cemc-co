@@ -1,5 +1,7 @@
+import { ChatTrigger } from "@/components/chat/chat-trigger";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
 import { cn } from "@/lib/utils";
+import { cookies } from "next/headers";
 
 type Props = {
   children: React.ReactNode;
@@ -10,10 +12,15 @@ export const metadata = {
 };
 
 const DashboardLayout = ({ children }: Props) => {
+  const cookieStore = cookies();
+  const clientId = cookieStore.get("ably_clientId");
+
+  console.log(clientId);
+
   return (
     <div
       className={cn(
-        "rounded-md flex flex-col md:flex-row bg-gray-100 dark:bg-neutral-800 w-full flex-1 mx-auto h-full"
+        "relative rounded-md flex flex-col md:flex-row bg-gray-100 dark:bg-neutral-800 w-full flex-1 mx-auto h-full"
       )}
     >
       <DashboardSidebar />
@@ -22,6 +29,7 @@ const DashboardLayout = ({ children }: Props) => {
           <div className="flex-1 mb-8">{children}</div>
         </div>
       </div>
+      <ChatTrigger clientId={clientId?.value ?? ""} />
     </div>
   );
 };

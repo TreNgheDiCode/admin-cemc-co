@@ -177,27 +177,23 @@ const MultiImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
             </div>
           ))}
           {/* Dropzone */}
-          {(!value || value.length < (dropzoneOptions?.maxFiles ?? 0)) && (
-            <div
-              {...getRootProps({
-                className: dropZoneClassName,
-              })}
-            >
-              {/* Main File Input */}
-              <input ref={ref} {...getInputProps()} />
-              <div className="flex flex-col items-center justify-center text-xs text-gray-400">
-                <UploadCloudIcon className="mb-2 h-7 w-7" />
-                <div className="text-gray-400">
-                  Kéo & thả vào đây để đăng tải
-                </div>
-                <div className="mt-3">
-                  <Button type="button" disabled={disabled}>
-                    select
-                  </Button>
-                </div>
+          <div
+            {...getRootProps({
+              className: dropZoneClassName,
+            })}
+          >
+            {/* Main File Input */}
+            <input ref={ref} {...getInputProps()} />
+            <div className="flex flex-col items-center justify-center text-xs text-gray-400">
+              <UploadCloudIcon className="mb-2 h-7 w-7" />
+              <div className="text-gray-400">Kéo & thả vào đây để đăng tải</div>
+              <div className="mt-3">
+                <Button type="button" disabled={disabled}>
+                  select
+                </Button>
               </div>
             </div>
-          )}
+          </div>
         </div>
         {/* Error Text */}
         <div className="mt-1 text-xs text-red-500">
