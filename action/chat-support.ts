@@ -63,10 +63,26 @@ export const sendChatSupport = async (values: ChatSupportFormValues) => {
 };
 
 export const getChatSessions = async () => {
-  const chatSession = await db.chatSession.findMany({
+  const chatSessions = await db.chatSession.findMany({
     select: {
       clientId: true,
-      email: true,
+      name: true,
+      updatedAt: true,
+      messages: {
+        select: {
+          role: true,
+          message: true,
+        },
+        take: 1,
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
+    },
+    orderBy: {
+      updatedAt: "desc",
     },
   });
+
+  return chatSessions;
 };

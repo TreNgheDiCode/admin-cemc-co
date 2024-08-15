@@ -1,3 +1,4 @@
+import { getChatSessions } from "@/action/chat-support";
 import { ChatTrigger } from "@/components/chat/chat-trigger";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
 import { cn } from "@/lib/utils";
@@ -11,11 +12,13 @@ export const metadata = {
   title: "Bảng điều khiển | CANADA MEDICAL AND EDUCATION",
 };
 
-const DashboardLayout = ({ children }: Props) => {
+const DashboardLayout = async ({ children }: Props) => {
   const cookieStore = cookies();
   const clientId = cookieStore.get("ably_clientId");
 
-  console.log(clientId);
+  const chats = await getChatSessions();
+
+  console.log(chats);
 
   return (
     <div
@@ -29,7 +32,7 @@ const DashboardLayout = ({ children }: Props) => {
           <div className="flex-1 mb-8">{children}</div>
         </div>
       </div>
-      <ChatTrigger clientId={clientId?.value ?? ""} />
+      <ChatTrigger clientId={clientId?.value ?? ""} chats={chats} />
     </div>
   );
 };

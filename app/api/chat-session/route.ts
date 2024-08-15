@@ -3,10 +3,10 @@ import { db } from "@/lib/db";
 import { ChatSessionRole } from "@prisma/client";
 import { NextResponse } from "next/server";
 
-export async function POST(req: Request, res: Response) {
+export async function POST(req: Request) {
   // Handle preflight
   if (req.method === "OPTIONS") {
-    return new Response(null, {
+    return NextResponse.json(null, {
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "POST",
@@ -37,7 +37,10 @@ export async function POST(req: Request, res: Response) {
       });
 
       if (!user) {
-        return { error: "Người dùng không tồn tại" };
+        return NextResponse.json(
+          { error: "Người dùng không tồn tại" },
+          { status: 400 }
+        );
       }
 
       const existChatSession = await db.chatSession.findFirst({

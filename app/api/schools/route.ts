@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
       pageSize = parseInt(searchParams.get("pageSize") as string);
     }
 
-    const schools = await GetSchools(page, pageSize);
+    const schools = await GetSchools();
 
     return NextResponse.json({ schools }, { status: 200 });
   } catch (error) {

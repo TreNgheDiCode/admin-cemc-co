@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { SchoolLib } from "@/types/school";
 import { StudentStatus } from "@prisma/client";
 
-export const GetSchools = async (page?: number, pageSize?: number) => {
+export const GetSchools = async () => {
   try {
     // SchoolLib
     const schools: SchoolLib = await db.school
@@ -62,8 +62,6 @@ export const GetSchools = async (page?: number, pageSize?: number) => {
         orderBy: {
           country: "asc",
         },
-        take: pageSize || 10,
-        skip: page ? (page - 1) * (pageSize || 10) : 0,
         cacheStrategy: {
           swr: 300,
           ttl: 3600,
