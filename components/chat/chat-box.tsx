@@ -18,18 +18,14 @@ import { Button } from "../ui/button";
 import { IconArrowElbowLeft } from "@tabler/icons-react";
 import { sendChatSupport } from "@/action/chat-support";
 import { toast } from "sonner";
-import { ChatSessionRole } from "@prisma/client";
 
 type Props = {
   clientId: string;
+  channel: Ably.RealtimeChannel;
 };
 
-export const ChatBox = ({ clientId }: Props) => {
+export const ChatBox = ({ clientId, channel }: Props) => {
   const [receivedMessages, setMessages] = useState<Ably.Message[]>([]);
-  const { channel } = useChannel("support", (message) => {
-    const history = receivedMessages.slice(-50);
-    setMessages([...history, message]);
-  });
 
   let messageEnd = useRef<HTMLDivElement>(null);
 
@@ -62,7 +58,7 @@ export const ChatBox = ({ clientId }: Props) => {
       } while (history);
     };
     getHistory();
-  }, [receivedMessages.length]);
+  }, [receivedMessages.length, channel]);
 
   useEffect(() => {
     if (messageEnd.current) {
@@ -92,7 +88,6 @@ export const ChatBox = ({ clientId }: Props) => {
   const onSubmit = async (values: ChatSupportFormValues) => {
     sendChatMessage(values.message);
     form.reset();
-    console.log(values);
     await sendChatSupport(values).then((res) => {
       if (res?.error) {
         toast.error(res.error);

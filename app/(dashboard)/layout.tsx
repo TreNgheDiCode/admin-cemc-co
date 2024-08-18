@@ -18,8 +18,6 @@ const DashboardLayout = async ({ children }: Props) => {
 
   const chats = await getChatSessions();
 
-  console.log(chats);
-
   return (
     <div
       className={cn(

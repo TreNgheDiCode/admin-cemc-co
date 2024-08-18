@@ -1,4 +1,5 @@
 import { ChatSupportSchema } from "@/data/form-schema";
+import { v4 as uuid } from "uuid";
 import { db } from "@/lib/db";
 import { ChatSessionRole } from "@prisma/client";
 import { NextResponse } from "next/server";
@@ -50,7 +51,7 @@ export async function POST(req: Request) {
       });
 
       if (existChatSession) {
-        if (data.clientId !== existChatSession.clientId) {
+        if (data.clientId && data.clientId !== existChatSession.clientId) {
           await db.chatSession.update({
             where: {
               id: existChatSession.id,
@@ -71,15 +72,6 @@ export async function POST(req: Request) {
 
         return NextResponse.json({ success: true }, { status: 200 });
       } else {
-        if (!data.clientId) {
-          return NextResponse.json(
-            {
-              error:
-                "Không tìm thấy mã máy khách. Không thể lưu trữ phiên chat",
-            },
-            { status: 400 }
-          );
-        }
         await db.chatSession.create({
           data: {
             messages: {
@@ -91,7 +83,7 @@ export async function POST(req: Request) {
               ],
             },
             userId: data.userId,
-            clientId: data.clientId,
+            clientId: uuid(),
           },
         });
 
@@ -102,7 +94,7 @@ export async function POST(req: Request) {
       }
     }
 
-    if (data.clientId) {
+    if (data.clientId && !data.userId) {
       const existChatSession = await db.chatSession.findFirst({
         where: {
           clientId: data.clientId,
@@ -110,7 +102,7 @@ export async function POST(req: Request) {
       });
 
       if (existChatSession) {
-        if (!existChatSession.userId && data.userId) {
+        if (data.userId && data.userId !== existChatSession.userId) {
           const existUser = await db.account.findUnique({
             where: {
               id: data.userId,
@@ -164,6 +156,13 @@ export async function POST(req: Request) {
           { status: 200 }
         );
       }
+    } else {
+      return NextResponse.json(
+        {
+          error: "Không thể lưu trữ phiên chat do không tìm thấy mã máy khách",
+        },
+        { status: 400 }
+      );
     }
   } catch (error) {
     console.log("ERROR CREATE CHAT SESSION", error);
