@@ -33,10 +33,10 @@ export const Chats = ({ chats, setSenderClientId }: Props) => {
               <div key={index} className="text-main dark:text-main-foreground">
                 Tin nhắn hiện đang trống
               </div>
-            ) : message.role === ChatSessionRole.ADMIN ? (
-              "Bạn" + ": " + message.message
+            ) : message!.role === ChatSessionRole.ADMIN ? (
+              "Bạn" + ": " + message!.message
             ) : (
-              "Người dùng " + chat.name + ": " + message.message
+              "Người dùng " + chat.name + ": " + message!.message
             )}
           </div>
         </div>

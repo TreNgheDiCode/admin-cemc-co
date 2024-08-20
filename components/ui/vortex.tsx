@@ -134,28 +134,28 @@ export const Vortex = (props: VortexProps) => {
 
     x = particleProps[i];
     y = particleProps[i2];
-    n = noise3D(x * xOff, y * yOff, tick * zOff) * noiseSteps * TAU;
-    vx = lerp(particleProps[i3], Math.cos(n), 0.5);
-    vy = lerp(particleProps[i4], Math.sin(n), 0.5);
+    n = noise3D(x! * xOff, y! * yOff, tick * zOff) * noiseSteps * TAU;
+    vx = lerp(particleProps[i3]!, Math.cos(n), 0.5);
+    vy = lerp(particleProps[i4]!, Math.sin(n), 0.5);
     life = particleProps[i5];
     ttl = particleProps[i6];
     speed = particleProps[i7];
-    x2 = x + vx * speed;
-    y2 = y + vy * speed;
+    x2 = x! + vx * speed!;
+    y2 = y! + vy * speed!;
     radius = particleProps[i8];
     hue = particleProps[i9];
 
-    drawParticle(x, y, x2, y2, life, ttl, radius, hue, ctx);
+    drawParticle(x!, y!, x2, y2, life!, ttl!, radius!, hue!, ctx);
 
-    life++;
+    life!++;
 
     particleProps[i] = x2;
     particleProps[i2] = y2;
     particleProps[i3] = vx;
     particleProps[i4] = vy;
-    particleProps[i5] = life;
+    particleProps[i5] = life!;
 
-    (checkBounds(x, y, canvas) || life > ttl) && initParticle(i);
+    (checkBounds(x!, y!, canvas) || life! > ttl!) && initParticle(i);
   };
 
   const drawParticle = (

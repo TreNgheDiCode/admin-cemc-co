@@ -86,7 +86,7 @@ const Chat = ({ clientId, chats }: Props) => {
                 ...chat.messages,
                 {
                   name:
-                    chat.messages[0].role === ChatSessionRole.ADMIN
+                    chat.messages[0]?.role === ChatSessionRole.ADMIN
                       ? "Bạn"
                       : "Người dùng",
                   message: message.data,

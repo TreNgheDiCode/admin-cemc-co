@@ -227,7 +227,7 @@ export const AI = createAI<AIState, UIState>({
       const createdAt = new Date();
       const path = `/chat/${chatId}`;
 
-      const firstMessageContent = messages[0].content as string;
+      const firstMessageContent = messages[0]?.content as string;
       const title = firstMessageContent.substring(0, 100);
 
       const chat: Chat = {

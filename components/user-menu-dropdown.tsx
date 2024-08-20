@@ -36,7 +36,8 @@ export const UserMenuDropdown = () => {
               {user?.fullName ?? "Trang quản trị"}
             </p>
             <p className="text-xs leading-none text-muted-foreground">
-              {user?.emailAddresses[0].emailAddress ?? "services@mecltd.edu.vn"}
+              {user?.emailAddresses[0]!.emailAddress ??
+                "services@mecltd.edu.vn"}
             </p>
           </div>
         </DropdownMenuLabel>

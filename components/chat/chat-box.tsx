@@ -49,8 +49,8 @@ export const ChatBox = ({ clientId, senderClientId }: Props) => {
           new ChatSessionMessage(
             message.clientId === clientId
               ? "Bạn"
-              : messages.filter((m) => senderClientId === m.clientId)[0].name ??
-                "Người dùng",
+              : messages.filter((m) => senderClientId === m.clientId)[0]
+                  ?.name ?? "Người dùng",
             message.data,
             message.clientId === clientId
               ? ChatSessionRole.ADMIN
@@ -126,7 +126,7 @@ export const ChatBox = ({ clientId, senderClientId }: Props) => {
                   message.clientId === clientId
                     ? "Bạn"
                     : messages.filter((m) => senderClientId === m.clientId)[0]
-                        .name ?? "Người dùng",
+                        ?.name ?? "Người dùng",
                   message.data,
                   message.clientId === clientId
                     ? ChatSessionRole.ADMIN
