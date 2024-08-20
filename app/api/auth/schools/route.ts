@@ -16,6 +16,12 @@ export async function GET(req: Request) {
         background: true,
         locations: {
           select: {
+            name: true,
+            images: {
+              select: {
+                url: true,
+              },
+            },
             isMain: true,
             cover: true,
             description: true,
@@ -23,6 +29,12 @@ export async function GET(req: Request) {
         },
         programs: {
           select: {
+            name: true,
+            images: {
+              select: {
+                url: true,
+              },
+            },
             cover: true,
             description: true,
           },
