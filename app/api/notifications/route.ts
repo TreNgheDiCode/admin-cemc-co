@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import admin from "firebase-admin";
-import { Message } from "firebase-admin/messaging";
+import { FirebaseMessagingError, Message } from "firebase-admin/messaging";
 import { NextRequest, NextResponse } from "next/server";
 
 // Initialize Firebase Admin SDK
@@ -34,13 +34,6 @@ export async function POST(request: NextRequest) {
           },
         });
       } else {
-        await db.notificationToken.create({
-          data: {
-            token,
-            userId,
-          },
-        });
-
         const payload: Message = {
           token,
           notification: {
@@ -63,6 +56,13 @@ export async function POST(request: NextRequest) {
 
         await admin.messaging().send(payload);
 
+        await db.notificationToken.create({
+          data: {
+            token,
+            userId,
+          },
+        });
+
         return NextResponse.json({
           success: true,
           message: "Cập nhật token thông báo thành công",
@@ -84,6 +84,18 @@ export async function POST(request: NextRequest) {
     }
   } catch (error) {
     console.log("ERROR UPDATE TOKEN", error);
+    if (error instanceof SyntaxError) {
+      return NextResponse.json(
+        { success: false, message: "Định dạng JSON không hợp lệ" },
+        { status: 400 }
+      );
+    }
+    if (error instanceof FirebaseMessagingError) {
+      return NextResponse.json(
+        { success: false, message: "Token thông báo không hợp lệ" },
+        { status: 500 }
+      );
+    }
     return NextResponse.json(
       { success: false, message: "Lỗi cập nhật token thông báo" },
       { status: 500 }

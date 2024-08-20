@@ -1,31 +1,20 @@
 "use client";
 
-import { ChatSessionRole } from "@prisma/client";
-import {
-  IconArrowLeft,
-  IconBrandWechat,
-  IconRefreshDot,
-  IconX,
-} from "@tabler/icons-react";
+import { cn } from "@/lib/utils";
+import { IconBrandWechat, IconRefreshDot, IconX } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Chat from "./chat";
-import { Chats } from "./chats";
+import Chat, { ChatSession } from "./chat";
 
 type Props = {
   clientId: string;
-  chats: {
-    name: string | null;
-    clientId: string;
-    updatedAt: Date;
-    messages: {
-      role: ChatSessionRole;
-      message: string;
-    }[];
-  }[];
+  chats: ChatSession[];
 };
 
 export const ChatTrigger = ({ clientId, chats }: Props) => {
   const [open, setOpen] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const router = useRouter();
   const iconCls = "w-12 h-12 text-primary-500 m-2";
   const icon = open ? (
     <IconX className={iconCls} />
@@ -42,7 +31,19 @@ export const ChatTrigger = ({ clientId, chats }: Props) => {
               <div className="text-lg font-semibold flex items-center gap-2">
                 Hỗ trợ trực tuyến
               </div>
-              <IconRefreshDot className="w-6 h-6 cursor-pointer" />
+              <IconRefreshDot
+                className={cn(
+                  "w-6 h-6 cursor-pointer",
+                  isRefreshing && "animate-spin"
+                )}
+                onClick={() => {
+                  setIsRefreshing(true);
+                  router.refresh();
+                  setTimeout(() => {
+                    setIsRefreshing(false);
+                  }, 2000);
+                }}
+              />
             </div>
             <div className="flex flex-col gap-2">
               <Chat clientId={clientId} chats={chats} />

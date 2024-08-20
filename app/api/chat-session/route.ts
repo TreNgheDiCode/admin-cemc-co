@@ -57,6 +57,7 @@ export async function POST(req: Request) {
               id: existChatSession.id,
             },
             data: {
+              ...data,
               clientId: data.clientId,
             },
           });
@@ -74,6 +75,7 @@ export async function POST(req: Request) {
       } else {
         await db.chatSession.create({
           data: {
+            ...data,
             messages: {
               create: [
                 {
@@ -121,7 +123,18 @@ export async function POST(req: Request) {
               id: existChatSession.id,
             },
             data: {
+              ...data,
               userId: data.userId,
+            },
+          });
+        } else {
+          await db.chatSession.update({
+            where: {
+              id: existChatSession.id,
+            },
+            data: {
+              ...data,
+              userId: undefined,
             },
           });
         }

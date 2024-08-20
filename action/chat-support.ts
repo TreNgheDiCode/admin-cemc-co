@@ -61,28 +61,3 @@ export const sendChatSupport = async (values: ChatSupportFormValues) => {
     return { error: "Lỗi lưu trữ phiên chat" };
   }
 };
-
-export const getChatSessions = async () => {
-  const chatSessions = await db.chatSession.findMany({
-    select: {
-      clientId: true,
-      name: true,
-      updatedAt: true,
-      messages: {
-        select: {
-          role: true,
-          message: true,
-        },
-        take: 1,
-        orderBy: {
-          createdAt: "desc",
-        },
-      },
-    },
-    orderBy: {
-      updatedAt: "desc",
-    },
-  });
-
-  return chatSessions;
-};

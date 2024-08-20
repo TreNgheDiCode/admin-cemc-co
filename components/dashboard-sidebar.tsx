@@ -96,7 +96,7 @@ export const Logo = () => {
         animate={{ opacity: 1 }}
         className="font-semibold whitespace-pre dark:text-main-foreground"
       >
-        Canada Medical and Education
+        CEMC Co,. Ltd
       </motion.span>
     </Link>
   );

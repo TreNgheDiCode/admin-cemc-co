@@ -1,6 +1,6 @@
-import { getChatSessions } from "@/action/chat-support";
 import { ChatTrigger } from "@/components/chat/chat-trigger";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
+import { getChatSessions } from "@/data/chat-support";
 import { cn } from "@/lib/utils";
 import { cookies } from "next/headers";
 
@@ -17,6 +17,23 @@ const DashboardLayout = async ({ children }: Props) => {
   const clientId = cookieStore.get("ably_clientId");
 
   const chats = await getChatSessions();
+  const chatsData = chats.map((chat) => {
+    return {
+      id: chat.id,
+      clientId: chat.clientId,
+      name: chat.name,
+      updatedAt: chat.updatedAt,
+      messages: chat.messages.map((message) => {
+        return {
+          name: message.name,
+          message: message.message,
+          role: message.role,
+          createdAt: message.createdAt,
+          clientId: message.clientId,
+        };
+      }),
+    };
+  });
 
   return (
     <div
@@ -30,7 +47,7 @@ const DashboardLayout = async ({ children }: Props) => {
           <div className="flex-1 mb-8">{children}</div>
         </div>
       </div>
-      <ChatTrigger clientId={clientId?.value ?? ""} chats={chats} />
+      <ChatTrigger clientId={clientId?.value ?? ""} chats={chatsData} />
     </div>
   );
 };

@@ -1,8 +1,10 @@
 "use client";
 
+import { CreateSchool } from "@/action/school";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { CreateSchoolFormValues, CreateSchoolSchema } from "@/data/form-schema";
+import { useDisableComponents } from "@/hooks/use-disable-components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -12,12 +14,9 @@ import { toast } from "sonner";
 import { CreateSchoolGallery } from "./create-school-gallery";
 import { CreateSchoolInformation } from "./create-school-information";
 import { CreateSchoolLocation } from "./create-school-location";
+import { CreateSchoolPreview } from "./create-school-preview";
 import { CreateSchoolProgram } from "./create-school-program";
 import { CreateSchoolScholarship } from "./create-school-scholarship";
-import { CreateSchoolPreview } from "./create-school-preview";
-import { Country } from "@prisma/client";
-import { CreateSchool } from "@/action/school";
-import { useDisableComponents } from "@/hooks/use-disable-components";
 
 export const CreateSchoolForm = () => {
   const [loading, setLoading] = useState(false);
@@ -25,33 +24,6 @@ export const CreateSchoolForm = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [data, setData] = useState<CreateSchoolFormValues>();
   const router = useRouter();
-
-  const tempValues = {
-    color: "#7D1F1F",
-    background:
-      "https://files.edgestore.dev/ej1zo8o303l788n0/publicFiles/_public/1464a3ec-67e0-4564-bc27-f4a25d0f0966.jpeg",
-    logo: "https://files.edgestore.dev/ej1zo8o303l788n0/publicFiles/_public/1464a3ec-67e0-4564-bc27-f4a25d0f0966.jpeg",
-    name: "Test",
-    short: "Test",
-    country: Country.AUSTRALIA,
-    locations: [
-      {
-        address: "Test",
-        cover:
-          "https://files.edgestore.dev/ej1zo8o303l788n0/publicFiles/_public/1464a3ec-67e0-4564-bc27-f4a25d0f0966.jpeg",
-        name: "Test",
-        isMain: true,
-      },
-    ],
-    programs: [
-      {
-        name: "Test",
-        cover:
-          "https://files.edgestore.dev/ej1zo8o303l788n0/publicFiles/_public/1464a3ec-67e0-4564-bc27-f4a25d0f0966.jpeg",
-        description: "Test",
-      },
-    ],
-  };
 
   const form = useForm<CreateSchoolFormValues>({
     resolver: zodResolver(CreateSchoolSchema),
@@ -144,7 +116,7 @@ export const CreateSchoolForm = () => {
   ];
 
   const next = async () => {
-    const fields = steps[currentStep].fields;
+    const fields = steps[currentStep]?.fields;
 
     const output = await form.trigger(fields as FieldName[], {
       shouldFocus: true,

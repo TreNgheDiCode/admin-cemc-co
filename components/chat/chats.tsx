@@ -2,18 +2,11 @@
 
 import { ChatSessionRole } from "@prisma/client";
 import { format } from "date-fns";
+import { ChatSession } from "./chat";
 
 type Props = {
-  chats: {
-    name: string | null;
-    clientId: string;
-    updatedAt: Date;
-    messages: {
-      role: ChatSessionRole;
-      message: string;
-    }[];
-  }[];
-  setSenderClientId: (clientId: string) => void;
+  chats: ChatSession[];
+  setSenderClientId: (id: string) => void;
 };
 
 export const Chats = ({ chats, setSenderClientId }: Props) => {
@@ -28,7 +21,7 @@ export const Chats = ({ chats, setSenderClientId }: Props) => {
       >
         <div className="flex items-center gap-2 justify-between">
           <div className="font-semibold text-sm">
-            Người dùng: {chat.name ?? "..." + clientIds[clientIds.length - 1]}
+            Người dùng {chat.name ?? "..." + clientIds[clientIds.length - 1]}
           </div>
           <div className="text-xs text-neutral-500 dark:text-neutral-400">
             {format(new Date(chat.updatedAt), "dd/MM/yyyy HH:mm")}
@@ -36,10 +29,15 @@ export const Chats = ({ chats, setSenderClientId }: Props) => {
         </div>
         <div className="flex flex-col gap-1">
           <div className="text-xs text-neutral-500 dark:text-neutral-400">
-            {message.role === ChatSessionRole.ADMIN
-              ? "Bạn"
-              : chat.name ?? "..." + clientIds[clientIds.length - 1]}
-            : {message.message}
+            {!chat || chat.messages.length === 0 ? (
+              <div key={index} className="text-main dark:text-main-foreground">
+                Tin nhắn hiện đang trống
+              </div>
+            ) : message.role === ChatSessionRole.ADMIN ? (
+              "Bạn" + ": " + message.message
+            ) : (
+              "Người dùng " + chat.name + ": " + message.message
+            )}
           </div>
         </div>
       </div>
