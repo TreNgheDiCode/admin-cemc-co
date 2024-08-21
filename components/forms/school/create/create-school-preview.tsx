@@ -1,6 +1,6 @@
 "use client";
 
-import { CreateSchoolFormValues } from "@/data/form-schema";
+import { CreateSchoolFormValues } from "@/data/schemas/form-schema";
 import { PreviewSchoolInformation } from "./preview-school-information";
 import { SchoolTabs } from "@/components/schools/school-tabs";
 import { PreviewSchoolTabs } from "./preview-school-tabs";

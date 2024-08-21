@@ -3,7 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { TypewriterEffectSmooth } from "@/components/ui/typewriter-effect";
-import { CreateSchoolFormValues } from "@/data/form-schema";
+import { CreateSchoolFormValues } from "@/data/schemas/form-schema";
 import Image from "next/image";
 import { PreviewInformation } from "./preview-information";
 

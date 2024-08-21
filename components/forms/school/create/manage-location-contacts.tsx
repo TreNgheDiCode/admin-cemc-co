@@ -9,7 +9,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { CreateSchoolFormValues } from "@/data/form-schema";
+import { CreateSchoolFormValues } from "@/data/schemas/form-schema";
 import {
   Control,
   FieldErrors,

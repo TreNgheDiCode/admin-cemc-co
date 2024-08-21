@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { CreateSchoolFormValues } from "@/data/form-schema";
+import { CreateSchoolFormValues } from "@/data/schemas/form-schema";
 import { useEdgeStore } from "@/lib/edgestore";
 import { SingleFileDropzone } from "@/types/generic";
 import Image from "next/image";

@@ -8,7 +8,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { CreateSchoolFormValues } from "@/data/form-schema";
+import { CreateSchoolFormValues } from "@/data/schemas/form-schema";
 import { useEdgeStore } from "@/lib/edgestore";
 import { SingleFileDropzone } from "@/types/generic";
 import { useEffect, useState } from "react";

@@ -28,6 +28,9 @@ export async function GET(req: Request) {
           },
         },
         programs: {
+          where: {
+            isPublished: true,
+          },
           select: {
             name: true,
             images: {
@@ -39,10 +42,6 @@ export async function GET(req: Request) {
             description: true,
           },
         },
-      },
-      cacheStrategy: {
-        swr: 300,
-        ttl: 3600,
       },
     });
 

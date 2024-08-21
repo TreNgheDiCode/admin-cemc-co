@@ -53,6 +53,59 @@ export const UpsertNotificationToken = async (
   }
 };
 
+// Gửi thông báo đến quản trị viên
+export const SendAdminNotification = async (
+  title: string,
+  body: string,
+  senderName: string,
+  link?: string
+) => {
+  try {
+    const token = await db.notificationToken.findFirst({
+      where: {
+        userId: process.env.ADMIN_ID!,
+      },
+      select: {
+        token: true,
+        userId: true,
+      },
+    });
+
+    if (!token) {
+      return { error: "Không tìm thấy mã token của quản trị viên" };
+    }
+
+    const payload: Message = {
+      token: token.token,
+      notification: {
+        title,
+        body,
+      },
+      webpush: {
+        fcmOptions: {
+          link,
+        },
+      },
+    };
+
+    admin.messaging().send(payload);
+
+    await db.notificationPush.create({
+      data: {
+        receiverId: token.userId,
+        title,
+        body,
+        type: "ANNOUNCEMENT",
+        senderName: senderName,
+      },
+    });
+  } catch (error) {
+    console.error("Error sending notification", error);
+
+    return { error: "Có lỗi xảy ra khi gửi thông báo" };
+  }
+};
+
 // Gửi thông báo đến tất cả người dùng
 export const SendGeneralNotifications = async (
   title: string,

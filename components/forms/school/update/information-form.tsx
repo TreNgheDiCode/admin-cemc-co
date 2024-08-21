@@ -12,7 +12,7 @@ import {
 import {
   SchoolInformationFormValues,
   SchoolInformationSchema,
-} from "@/data/form-schema";
+} from "@/data/schemas/form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { School } from "@prisma/client";
 import Image from "next/image";

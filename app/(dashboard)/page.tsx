@@ -6,6 +6,7 @@ import { getDate } from "@/lib/utils";
 export default async function Home() {
   const TRACKING_DAY = 7; // Number of days to track
   const pageview = await analytics.retrieveDays("pageview", TRACKING_DAY);
+  const register = await analytics.retrieveDays("register", TRACKING_DAY);
 
   const totalPageViews = pageview.reduce((acc, curr) => {
     return (

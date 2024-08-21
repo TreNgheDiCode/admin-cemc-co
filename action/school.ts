@@ -5,7 +5,7 @@ import {
   CreateSchoolSchema,
   SchoolInformationFormValues,
   SchoolInformationSchema,
-} from "@/data/form-schema";
+} from "@/data/schemas/form-schema";
 import { db } from "@/lib/db";
 import admin from "firebase-admin";
 import { SendGeneralNotifications } from "./notification";

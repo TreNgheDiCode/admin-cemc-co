@@ -1,6 +1,9 @@
 "use server";
 
-import { ChatSupportFormValues, ChatSupportSchema } from "@/data/form-schema";
+import {
+  ChatSupportFormValues,
+  ChatSupportSchema,
+} from "@/data/schemas/form-schema";
 import { db } from "@/lib/db";
 import { ChatSessionRole } from "@prisma/client";
 import { cookies } from "next/headers";

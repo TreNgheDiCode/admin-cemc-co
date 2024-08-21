@@ -80,7 +80,7 @@ const AnalyticsDashboard = ({
         <h2 className="text-main dark:text-main-foreground w-full text-center sm:text-left font-semibold text-xl">
           Quốc gia truy cập nhiều nhất
         </h2>
-        <div className="col-span-3 flex items-center justify-between flex-wrap gap-8">
+        <div className="col-span-3 flex items-center flex-wrap gap-8">
           {topCountries.map(([code, number]) => {
             return (
               <div key={code} className="flex items-center gap-3">

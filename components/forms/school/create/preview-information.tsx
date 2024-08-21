@@ -1,6 +1,6 @@
 "use client";
 
-import { CreateSchoolFormValues } from "@/data/form-schema";
+import { CreateSchoolFormValues } from "@/data/schemas/form-schema";
 import { cn } from "@/lib/utils";
 import {
   Modal,

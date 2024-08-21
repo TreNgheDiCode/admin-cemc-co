@@ -2,7 +2,10 @@
 
 import { sendChatSupport } from "@/action/chat-support";
 import { getChatSessionMessages } from "@/data/chat-support";
-import { ChatSupportFormValues, ChatSupportSchema } from "@/data/form-schema";
+import {
+  ChatSupportFormValues,
+  ChatSupportSchema,
+} from "@/data/schemas/form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChatSessionRole } from "@prisma/client";
 import {

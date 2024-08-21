@@ -3,7 +3,10 @@
 import { CreateSchool } from "@/action/school";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { CreateSchoolFormValues, CreateSchoolSchema } from "@/data/form-schema";
+import {
+  CreateSchoolFormValues,
+  CreateSchoolSchema,
+} from "@/data/schemas/form-schema";
 import { useDisableComponents } from "@/hooks/use-disable-components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft, ChevronRight } from "lucide-react";

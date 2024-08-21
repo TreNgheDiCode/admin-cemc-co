@@ -1,4 +1,4 @@
-import { ChatSupportSchema } from "@/data/form-schema";
+import { ChatSupportSchema } from "@/data/schemas/form-schema";
 import { v4 as uuid } from "uuid";
 import { db } from "@/lib/db";
 import { ChatSessionRole } from "@prisma/client";
