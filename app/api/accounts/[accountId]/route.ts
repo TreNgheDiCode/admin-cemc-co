@@ -19,6 +19,7 @@ export async function GET(
       },
       select: {
         id: true,
+        image: true,
         name: true,
         email: true,
         emailVerified: true,
@@ -28,10 +29,6 @@ export async function GET(
             status: true,
           },
         },
-      },
-      cacheStrategy: {
-        swr: 300,
-        ttl: 3600,
       },
     });
 
