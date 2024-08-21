@@ -252,7 +252,7 @@ model StudentSchoolScholarship {
   status      StudentSchoolScholarshipStatus @default(PENDING)
   description String?
 
-  studentId String  @unique
+  studentId String
   student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   scholarshipId String

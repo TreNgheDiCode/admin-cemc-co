@@ -22,6 +22,8 @@ export const sendChatSupport = async (values: ChatSupportFormValues) => {
 
     if (!message) return { error: "Tin nhắn không được để trống" };
 
+    console.log(data);
+
     if (data.clientId && data.clientId !== clientId?.value) {
       const existChatSession = await db.chatSession.findFirst({
         where: {

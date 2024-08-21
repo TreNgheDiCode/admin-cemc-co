@@ -180,6 +180,7 @@ export const ChatBox = ({ clientId, senderClientId }: Props) => {
 
   const onSubmit = async (values: ChatSupportFormValues) => {
     sendChatMessage(values.message);
+    console.log(values);
     form.reset();
     await sendChatSupport(values).then((res) => {
       if (res?.error) {

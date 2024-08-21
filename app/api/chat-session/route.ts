@@ -1,7 +1,7 @@
 import { ChatSupportSchema } from "@/data/schemas/form-schema";
 import { v4 as uuid } from "uuid";
 import { db } from "@/lib/db";
-import { ChatSessionRole } from "@prisma/client";
+import { ChatSessionMessage, ChatSessionRole } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -30,6 +30,10 @@ export async function POST(req: Request) {
 
     const { message, ...data } = validatedValues.data;
 
+    console.log("DATA", data);
+    console.log("MESSAGE", message);
+
+    // Check if user is logged in
     if (data.userId) {
       const user = await db.account.findUnique({
         where: {
@@ -61,18 +65,124 @@ export async function POST(req: Request) {
               clientId: data.clientId,
             },
           });
+        } else if (
+          (data.email && data.email !== existChatSession.email) ||
+          (data.phone && data.phone !== existChatSession.phone)
+        ) {
+          await db.chatSession.update({
+            where: {
+              id: existChatSession.id,
+            },
+            data: {
+              ...data,
+              email: data.email,
+              phone: data.phone,
+            },
+          });
         }
 
-        await db.chatSessionMessage.create({
-          data: {
-            message,
-            role: ChatSessionRole.USER,
-            chatSessionId: existChatSession.id,
+        let messages: ChatSessionMessage[] = [];
+        const existClients = await db.chatSession.findMany({
+          where: {
+            clientId: data.clientId,
+          },
+          include: {
+            messages: true,
           },
         });
 
+        if (existClients.length > 1) {
+          existClients.forEach((client) => {
+            messages = [...messages, ...client.messages];
+          });
+
+          const clientNeedToDelete = existClients.find(
+            (client) => client.id !== existChatSession.id
+          );
+
+          await db.chatSessionMessage.deleteMany({
+            where: {
+              chatSessionId: clientNeedToDelete!.id,
+            },
+          });
+
+          await db.chatSessionMessage.deleteMany({
+            where: {
+              chatSessionId: existChatSession.id,
+            },
+          });
+
+          await db.chatSession.delete({
+            where: {
+              id: clientNeedToDelete!.id,
+            },
+          });
+        }
+
+        if (messages.length === 0) {
+          await db.chatSessionMessage.create({
+            data: {
+              message,
+              role: ChatSessionRole.USER,
+              chatSessionId: existChatSession.id,
+            },
+          });
+        } else {
+          messages.sort((a, b) => {
+            return a.createdAt.getTime() - b.createdAt.getTime();
+          });
+
+          const messagesToCreaet = messages.map((msg) => {
+            return {
+              message: msg.message,
+              role: msg.role,
+              chatSessionId: existChatSession.id,
+            };
+          });
+
+          await db.chatSessionMessage.createMany({
+            data: messagesToCreaet,
+          });
+
+          await db.chatSessionMessage.create({
+            data: {
+              message,
+              role: ChatSessionRole.USER,
+              chatSessionId: existChatSession.id,
+            },
+          });
+        }
+
         return NextResponse.json({ success: true }, { status: 200 });
       } else {
+        const existClient = await db.chatSession.findFirst({
+          where: {
+            clientId: data.clientId,
+          },
+        });
+
+        if (existClient) {
+          await db.chatSession.update({
+            where: {
+              id: existClient.id,
+            },
+            data: {
+              ...data,
+              userId: data.userId,
+            },
+          });
+
+          await db.chatSessionMessage.create({
+            data: {
+              message,
+              role: ChatSessionRole.USER,
+              chatSessionId: existClient.id,
+            },
+          });
+
+          return NextResponse.json({ success: true }, { status: 200 });
+        }
+
         await db.chatSession.create({
           data: {
             ...data,
@@ -96,7 +206,7 @@ export async function POST(req: Request) {
       }
     }
 
-    if (data.clientId && !data.userId) {
+    if (data.clientId) {
       const existChatSession = await db.chatSession.findFirst({
         where: {
           clientId: data.clientId,

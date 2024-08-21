@@ -75,8 +75,6 @@ const Chat = ({ clientId, chats }: Props) => {
 
     const subscriptions = channels.map((channel) => {
       const handler = (message: Ably.Message) => {
-        console.log(message); // Should only log once per message
-
         const updatedChats = chatsState.map((chat) => {
           const name = message.name!.split(":")[1];
           if (chat.clientId === name && message.clientId) {
@@ -109,8 +107,6 @@ const Chat = ({ clientId, chats }: Props) => {
       channel.subscribe(handler);
       return { channel, handler };
     });
-
-    console.log(chatsState);
 
     return () => {
       subscriptions.forEach(({ channel, handler }) => {
