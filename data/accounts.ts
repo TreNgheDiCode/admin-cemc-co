@@ -128,6 +128,10 @@ export const GetAccounts = async (page: number = 1, pageSize: number = 10) => {
       },
       take: pageSize,
       skip: (page - 1) * pageSize,
+      cacheStrategy: {
+        swr: 60,
+        ttl: 300,
+      },
     });
 
     return accounts;

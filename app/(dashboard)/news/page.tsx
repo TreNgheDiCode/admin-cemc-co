@@ -1,20 +1,18 @@
-"use client";
-
 import { Navbar } from "@/components/navbar";
 import NewsTable from "@/components/tables/news/news-table";
-import { useRouter, useSearchParams } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import Loading from "../loading";
 
-const NewsPage = () => {
-  const searchParams = useSearchParams();
-  const router = useRouter();
+type Props = {
+  searchParams: { [key: string]: string | string[] | undefined };
+};
 
-  const page = searchParams.get("page");
-  const pageSize = searchParams.get("pageSize");
+const NewsPage = ({ searchParams }: Props) => {
+  const { page, pageSize } = searchParams;
 
   if (!page || !pageSize) {
-    router.push("/news?page=1&pageSize=10");
+    redirect("/accounts?page=1&pageSize=10");
   }
 
   return (

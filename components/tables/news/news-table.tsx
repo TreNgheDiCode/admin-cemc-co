@@ -1,8 +1,7 @@
 import { Heading } from "@/components/heading";
 import { Separator } from "@/components/ui/separator";
-import { GetAccounts } from "@/data/accounts";
-import { AccountsDataTable } from "./accounts-data-table";
 import { GetNews } from "@/data/news";
+import { NewsDataTable } from "./news-data-table";
 
 type Props = {
   page: number;
@@ -25,6 +24,7 @@ const NewsTable = async ({ page, pageSize }: Props) => {
         <Heading title={`Tài khoản (Số lượng: ${news?.length})`} />
       </div>
       <Separator />
+      <NewsDataTable news={news} />
     </>
   );
 };

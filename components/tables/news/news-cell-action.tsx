@@ -9,17 +9,17 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { AccountLib } from "@/types/account";
-import { IconScript } from "@tabler/icons-react";
-import { MoreHorizontal, ReceiptText, Trash } from "lucide-react";
+import { GetNews } from "@/data/news";
+import { NewsLib } from "@/types/news";
+import { Edit, MoreHorizontal, ReceiptText, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 type Props = {
-  account: AccountLib;
+  news: NewsLib;
 };
 
-export const AccountCellAction = ({ account }: Props) => {
+export const NewsCellAction = ({ news }: Props) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
@@ -48,7 +48,7 @@ export const AccountCellAction = ({ account }: Props) => {
             <ReceiptText className="mr-2 h-4 w-4" /> Xem thông tin chi tiết
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => {}}>
-            <IconScript className="mr-2 h-4 w-4" /> Xem hồ sơ du học
+            <Edit className="mr-2 h-4 w-4" /> Cập nhật
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpen(true)}>
             <Trash className="mr-2 h-4 w-4" /> Khóa tài khoản

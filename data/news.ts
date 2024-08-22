@@ -1,8 +1,9 @@
 import { db } from "@/lib/db";
+import { NewsLib } from "@/types/news";
 
 export const GetNews = async (page: number, pageSize: number) => {
   try {
-    const news = await db.news.findMany({
+    const news: NewsLib[] = await db.news.findMany({
       include: {
         school: {
           select: {
@@ -11,6 +12,8 @@ export const GetNews = async (page: number, pageSize: number) => {
           },
         },
       },
+      take: pageSize,
+      skip: (page - 1) * pageSize,
       cacheStrategy: {
         swr: 60,
         ttl: 300,

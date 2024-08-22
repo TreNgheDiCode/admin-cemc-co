@@ -1,20 +1,22 @@
 "use client";
 
-import { AccountLib } from "@/types/account";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { GetNews } from "@/data/news";
 import { cn } from "@/lib/utils";
 import { Button } from "@nextui-org/button";
+import { Chip, ChipProps } from "@nextui-org/chip";
 import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/dropdown";
+import { Input } from "@nextui-org/input";
 import { Pagination } from "@nextui-org/pagination";
 import {
   Selection,
@@ -26,9 +28,11 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/table";
+import { NewsType } from "@prisma/client";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
 import { CalendarIcon, ChevronDown, SearchIcon, X } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   ChangeEvent,
   Key,
@@ -37,101 +41,76 @@ import {
   useMemo,
   useState,
 } from "react";
-import { Gender, StudentStatus } from "@prisma/client";
-import { Chip, ChipProps } from "@nextui-org/chip";
-import { AccountCellAction } from "./account-cell-action";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Input } from "@nextui-org/input";
+import { NewsCellAction } from "./news-cell-action";
+import { NewsLib } from "@/types/news";
 
 type Props = {
-  accounts: AccountLib[];
+  news: NewsLib[];
 };
 
 const columns = [
   { name: "STT", uid: "index", sortable: true },
   { name: "Hành động", uid: "actions" },
-  { name: "Mã tài khoản", uid: "id", sortable: true },
-  { name: "Họ và tên", uid: "name", sortable: true },
-  { name: "Email", uid: "email", sortable: true },
-  { name: "Số điện thoại", uid: "phoneNumber", sortable: true },
-  { name: "Địa chỉ", uid: "address", sortable: true },
-  { name: "CMND", uid: "idCardNumber", sortable: true },
-  { name: "Ngày sinh", uid: "dob", sortable: true },
-  { name: "Tạo lúc", uid: "createdAt", sortable: true },
-  { name: "Tình trạng", uid: "student.status", sortable: true },
-  { name: "Đã khóa", uid: "isLocked", sortable: true },
+  { name: "Mã tin tức", uid: "id", sortable: true },
+  { name: "Tiêu đề", uid: "title", sortable: true },
+  { name: "Trường học", uid: "school.name", sortable: true },
+  { name: "Loại tin", uid: "type", sortable: true },
+  { name: "Tình trạng", uid: "isPublished", sortable: true },
+  { name: "Ngày tạo", uid: "createdAt", sortable: true },
+  { name: "Ngày cập nhật", uid: "updatedAt  ", sortable: true },
 ];
 
 const INITIAL_VISIBLE_COLUMNS = [
   "index",
   "actions",
-  "name",
-  "email",
-  "phoneNumber",
-  "dob",
-  "gender",
+  "id",
+  "title",
+  "school.name",
+  "type",
+  "isPublished",
   "createdAt",
-  "isLocked",
 ];
 
-const studentStatusColorMap: Record<StudentStatus, ChipProps["color"]> = {
-  APPROVED: "success",
-  AWAITING: "warning",
-  DROPPED: "danger",
-  STUDYING: "primary",
+const newsTypeColorMap: Record<NewsType, ChipProps["color"]> = {
+  ANNOUNCEMENT: "warning",
+  EVENT: "success",
+  BLOG: "primary",
 };
 
-const studentStatusLabelMap: Record<StudentStatus, string> = {
-  APPROVED: "Đã duyệt",
-  AWAITING: "Chờ duyệt",
-  DROPPED: "Đã nghỉ học",
-  STUDYING: "Đang học",
+const newsTypeLabelMap: Record<NewsType, string> = {
+  ANNOUNCEMENT: "Thông báo",
+  EVENT: "Sự kiện",
+  BLOG: "Bài viết",
 };
 
-const studentStatusOptions = [
-  { name: "APPROVED", uid: "Đã duyệt" },
-  { name: "AWAITING", uid: "Chờ duyệt" },
-  { name: "DROPPED", uid: "Đã nghỉ học" },
-  { name: "STUDYING", uid: "Đang học" },
+const newsTypeOptions = [
+  { name: "Thông báo", uid: "ANNOUNCEMENT" },
+  { name: "Sự kiện", uid: "EVENT" },
+  { name: "Bài viết", uid: "BLOG" },
 ];
 
-const genderColorMap: Record<string, ChipProps["color"]> = {
-  MALE: "success",
-  FEMALE: "warning",
+const publishedColorMap: Record<string, ChipProps["color"]> = {
+  true: "success",
+  false: "danger",
 };
 
-const genderLabelMap: Record<Gender, string> = {
-  MALE: "Nam",
-  FEMALE: "Nữ",
+const publishedLabelMap: Record<string, string> = {
+  true: "Đã xuất bản",
+  false: "Tạm ẩn",
 };
 
-const genderOptions = [
-  { name: "Nam", uid: "MALE" },
-  { name: "Nữ", uid: "FEMALE" },
+const publishedOptions = [
+  { name: "Đã xuất bản", uid: "true" },
+  { name: "Tạm ẩn", uid: "false" },
 ];
 
-const lockedColorMap: Record<string, ChipProps["color"]> = {
-  true: "danger",
-  false: "success",
-};
-
-const lockedLabelMap: Record<string, string> = {
-  true: "Đã khóa",
-  false: "Đang kích hoạt",
-};
-
-const lockedOptions = [
-  { name: "Đã khóa", uid: "true" },
-  { name: "Đang kích hoạt", uid: "false" },
-];
-
-export const AccountsDataTable = ({ accounts }: Props) => {
+export const NewsDataTable = ({ news }: Props) => {
   const [filterSearchValue, setFilterSearchValue] = useState("");
-  const [filterDobValue, setFilterDobValue] = useState<Date | null>(null);
-  const [genderFilter, setGenderFilter] = useState<Selection>("all");
-  const [studentStatusFilter, setStudentStatusFilter] =
-    useState<Selection>("all");
-  const [lockedFilter, setLockedFilter] = useState<Selection>("all");
+  const [filterCreatedAtValue, setFilterCreatedAtValue] = useState<Date | null>(
+    null
+  );
+  const [publishedFilter, setPublishedFilter] = useState<Selection>("all");
+  const [typeFilter, setTypeFilter] = useState<Selection>("all");
 
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
     new Set(INITIAL_VISIBLE_COLUMNS)
@@ -149,9 +128,9 @@ export const AccountsDataTable = ({ accounts }: Props) => {
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
 
   const hasSearchFilter = Boolean(filterSearchValue);
-  const hasDobFilter = Boolean(filterDobValue);
+  const hasCreatedAtFilter = Boolean(filterCreatedAtValue);
 
-  const pages = Math.ceil(accounts.length / rowsPerPage);
+  const pages = Math.ceil(news.length / rowsPerPage);
 
   const headerColumns = useMemo(() => {
     if (visibleColumns === "all") return columns;
@@ -162,11 +141,11 @@ export const AccountsDataTable = ({ accounts }: Props) => {
   }, [visibleColumns]);
 
   const filteredItems = useMemo(() => {
-    let filteredAccounts = [...accounts];
+    let filteredNews = [...news];
 
     if (hasSearchFilter) {
-      filteredAccounts = filteredAccounts.filter((feedback) =>
-        Object.values(feedback).some(
+      filteredNews = filteredNews.filter((news) =>
+        Object.values(news).some(
           (value) =>
             typeof value === "string" &&
             value.toLowerCase().includes(filterSearchValue.toLowerCase())
@@ -174,55 +153,44 @@ export const AccountsDataTable = ({ accounts }: Props) => {
       );
     }
 
-    if (hasDobFilter) {
-      filteredAccounts = filteredAccounts.filter((account) => {
-        const accountDob = new Date(account.dob);
+    if (hasCreatedAtFilter) {
+      filteredNews = filteredNews.filter((news) => {
+        const newsCreatedAt = new Date(news.createdAt);
         return (
-          accountDob.getDate() === filterDobValue?.getDate() &&
-          accountDob.getMonth() === filterDobValue?.getMonth() &&
-          accountDob.getFullYear() === filterDobValue?.getFullYear()
+          newsCreatedAt.getDate() === filterCreatedAtValue?.getDate() &&
+          newsCreatedAt.getMonth() === filterCreatedAtValue?.getMonth() &&
+          newsCreatedAt.getFullYear() === filterCreatedAtValue?.getFullYear()
         );
       });
     }
 
     if (
-      genderFilter !== "all" &&
-      Array.from(genderFilter).length !== genderOptions.length
+      typeFilter !== "all" &&
+      Array.from(typeFilter).length !== newsTypeOptions.length
     ) {
-      filteredAccounts = filteredAccounts.filter((account) =>
-        Array.from(genderFilter).includes(account.gender)
+      filteredNews = filteredNews.filter((news) =>
+        Array.from(typeFilter).includes(news.type)
       );
     }
 
     if (
-      studentStatusFilter !== "all" &&
-      Array.from(studentStatusFilter).length !== studentStatusOptions.length
+      publishedFilter !== "all" &&
+      Array.from(publishedFilter).length !== publishedOptions.length
     ) {
-      filteredAccounts = filteredAccounts.filter((account) => {
-        if (!account.student) return false;
-        return Array.from(studentStatusFilter).includes(account.student.status);
-      });
-    }
-
-    if (
-      lockedFilter !== "all" &&
-      Array.from(lockedFilter).length !== lockedOptions.length
-    ) {
-      filteredAccounts = filteredAccounts.filter((account) =>
-        Array.from(lockedFilter).includes(account.isLocked.toString())
+      filteredNews = filteredNews.filter((news) =>
+        Array.from(publishedFilter).includes(news.isPublished.toString())
       );
     }
 
-    return filteredAccounts;
+    return filteredNews;
   }, [
-    accounts,
+    news,
+    publishedFilter,
+    typeFilter,
     filterSearchValue,
-    filterDobValue,
-    genderFilter,
-    studentStatusFilter,
-    lockedFilter,
+    filterCreatedAtValue,
     hasSearchFilter,
-    hasDobFilter,
+    hasCreatedAtFilter,
   ]);
 
   const items = useMemo(() => {
@@ -234,12 +202,12 @@ export const AccountsDataTable = ({ accounts }: Props) => {
 
   const sortedItems = useMemo(() => {
     return [...items]
-      .sort((a: AccountLib, b: AccountLib) => {
+      .sort((a: NewsLib, b: NewsLib) => {
         const first = a[
-          sortDescriptor.column as keyof AccountLib
+          sortDescriptor.column as keyof NewsLib
         ] as unknown as number;
         const second = b[
-          sortDescriptor.column as keyof AccountLib
+          sortDescriptor.column as keyof NewsLib
         ] as unknown as number;
         const cmp = first < second ? -1 : first > second ? 1 : 0;
 
@@ -249,7 +217,7 @@ export const AccountsDataTable = ({ accounts }: Props) => {
   }, [sortDescriptor, items]);
 
   const renderCell = useCallback(
-    (account: AccountLib, columnKey: Key, index: number) => {
+    (news: NewsLib, columnKey: Key, index: number) => {
       switch (columnKey) {
         case "index":
           return (
@@ -260,96 +228,65 @@ export const AccountsDataTable = ({ accounts }: Props) => {
         case "id":
           return (
             <p className="font-bold text-tiny capitalize text-primary">
-              {account.id}
+              {news.id}
             </p>
           );
-        case "name":
+        case "title":
           return (
             <p className="font-bold text-tiny capitalize text-primary">
-              {account.name}
+              {news.title}
             </p>
           );
-        case "dob":
-          return (
+        case "school.name":
+          return news.school ? (
             <p className="font-bold text-tiny capitalize text-primary">
-              {account.dob
-                ? format(new Date(account.dob), "dd/MM/yyyy", {
-                    locale: vi,
-                  })
-                : "Không có thông tin"}
+              {news.school.name}
+            </p>
+          ) : (
+            <p className="font-bold text-tiny capitalize text-primary">
+              Không có trường học
             </p>
           );
-        case "email":
+        case "type":
           return (
-            <p className="font-bold text-tiny capitalize text-primary">
-              {account.email}
-            </p>
+            <Chip
+              className="capitalize"
+              color={newsTypeColorMap[news.type]}
+              size="sm"
+              variant="flat"
+            >
+              {newsTypeLabelMap[news.type]}
+            </Chip>
           );
-        case "phoneNumber":
+        case "isPublished":
           return (
-            <p className="font-bold text-tiny capitalize text-primary">
-              {account.phoneNumber}
-            </p>
-          );
-        case "address":
-          return (
-            <p className="font-bold text-tiny capitalize text-primary">
-              {account.address}
-            </p>
-          );
-        case "idCardNumber":
-          return (
-            <p className="font-bold text-tiny capitalize text-primary">
-              {account.idCardNumber}
-            </p>
+            <Chip
+              className="capitalize"
+              color={publishedColorMap[news.isPublished.toString()]}
+              size="sm"
+              variant="flat"
+            >
+              {publishedLabelMap[news.isPublished.toString()]}
+            </Chip>
           );
         case "createdAt":
           return (
             <p className="font-bold text-tiny capitalize text-primary">
-              {format(new Date(account.createdAt), "dd/MM/yyyy", {
+              {format(new Date(news.createdAt), "dd/MM/yyyy", {
                 locale: vi,
               })}
             </p>
           );
-        case "isLocked":
+        case "updatedAt":
           return (
-            <Chip
-              className="capitalize"
-              color={lockedColorMap[account.isLocked.toString()]}
-              size="sm"
-              variant="flat"
-            >
-              {lockedLabelMap[account.isLocked.toString()]}
-            </Chip>
-          );
-        case "gender":
-          return (
-            <Chip
-              className="capitalize"
-              color={genderColorMap[account.gender]}
-              size="sm"
-              variant="flat"
-            >
-              {genderLabelMap[account.gender]}
-            </Chip>
-          );
-        case "student.status":
-          return account.student ? (
-            <Chip
-              className="capitalize"
-              color={studentStatusColorMap[account.student.status]}
-              size="sm"
-              variant="flat"
-            >
-              {studentStatusLabelMap[account.student.status]}
-            </Chip>
-          ) : (
             <p className="font-bold text-tiny capitalize text-primary">
-              Không có thông tin học sinh
+              {format(new Date(news.updatedAt), "dd/MM/yyyy", {
+                locale: vi,
+              })}
             </p>
           );
         case "actions":
-          return <AccountCellAction account={account} />;
+          return <NewsCellAction news={news} />;
       }
     },
     []
@@ -400,13 +337,7 @@ export const AccountsDataTable = ({ accounts }: Props) => {
     onPaginationChange("page", "1");
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    filterSearchValue,
-    filterDobValue,
-    genderFilter,
-    studentStatusFilter,
-    lockedFilter,
-  ]);
+  }, [filterSearchValue, filterCreatedAtValue, publishedFilter, typeFilter]);
 
   const onSearchChange = useCallback((value?: string) => {
     if (value) {
@@ -416,16 +347,16 @@ export const AccountsDataTable = ({ accounts }: Props) => {
     }
   }, []);
 
-  const onSearchDobChange = useCallback((date: Date) => {
-    setFilterDobValue(date);
+  const onSearchCreatedAtChange = useCallback((date: Date) => {
+    setFilterCreatedAtValue(date);
   }, []);
 
   const onClearSearch = useCallback(() => {
     setFilterSearchValue("");
   }, []);
 
-  const onClearSearchDob = useCallback(() => {
-    setFilterDobValue(null);
+  const onClearSearchCreatedAt = useCallback(() => {
+    setFilterCreatedAtValue(null);
   }, []);
 
   const topContent = useMemo(() => {
@@ -448,23 +379,23 @@ export const AccountsDataTable = ({ accounts }: Props) => {
                 variant={"flat"}
                 className={cn(
                   "w-full pl-3 text-left font-normal",
-                  !filterDobValue && "text-muted-foreground"
+                  !filterCreatedAtValue && "text-muted-foreground"
                 )}
                 endContent={
-                  filterDobValue && (
+                  filterCreatedAtValue && (
                     <X
                       className="size-4 text-rose-500"
-                      onClick={onClearSearchDob}
+                      onClick={onClearSearchCreatedAt}
                     />
                   )
                 }
               >
-                {filterDobValue ? (
-                  format(new Date(filterDobValue), "dd/MM/yyyy", {
+                {filterCreatedAtValue ? (
+                  format(new Date(filterCreatedAtValue), "dd/MM/yyyy", {
                     locale: vi,
                   })
                 ) : (
-                  <span>Chọn ngày sinh</span>
+                  <span>Chọn ngày xuất bản</span>
                 )}
                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
               </Button>
@@ -474,10 +405,10 @@ export const AccountsDataTable = ({ accounts }: Props) => {
                 mode="single"
                 fromYear={1970}
                 toYear={2050}
-                selected={filterDobValue ?? undefined}
+                selected={filterCreatedAtValue ?? undefined}
                 onSelect={(value) => {
                   if (!value) return;
-                  onSearchDobChange(value);
+                  onSearchCreatedAtChange(value);
                 }}
                 initialFocus
               />
@@ -489,10 +420,10 @@ export const AccountsDataTable = ({ accounts }: Props) => {
             variant={"bordered"}
             size={"md"}
             onClick={() => {
-              router.push("/schools/create");
+              router.push("/news/create");
             }}
           >
-            Thêm trường học
+            Thêm tin tức
           </Button>
           <div className="flex justify-end items-center gap-3">
             <Dropdown>
@@ -501,18 +432,18 @@ export const AccountsDataTable = ({ accounts }: Props) => {
                   endContent={<ChevronDown className="text-small" />}
                   variant="flat"
                 >
-                  Giới tính
+                  Đã xuất bản
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
                 disallowEmptySelection
                 aria-label="Table Columns"
                 closeOnSelect={false}
-                selectedKeys={genderFilter}
+                selectedKeys={publishedFilter}
                 selectionMode="multiple"
-                onSelectionChange={setGenderFilter}
+                onSelectionChange={setPublishedFilter}
               >
-                {genderOptions.map((gender) => (
+                {publishedOptions.map((gender) => (
                   <DropdownItem key={gender.uid} className="capitalize">
                     {gender.name}
                   </DropdownItem>
@@ -525,44 +456,20 @@ export const AccountsDataTable = ({ accounts }: Props) => {
                   endContent={<ChevronDown className="text-small" />}
                   variant="flat"
                 >
-                  Tình trạng
+                  Loại tin tức
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
                 disallowEmptySelection
                 aria-label="Table Columns"
                 closeOnSelect={false}
-                selectedKeys={studentStatusFilter}
+                selectedKeys={typeFilter}
                 selectionMode="multiple"
-                onSelectionChange={setStudentStatusFilter}
+                onSelectionChange={setTypeFilter}
               >
-                {studentStatusOptions.map((status) => (
+                {newsTypeOptions.map((status) => (
                   <DropdownItem key={status.uid} className="capitalize">
                     {status.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<ChevronDown className="text-small" />}
-                  variant="flat"
-                >
-                  Đã khóa
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={lockedFilter}
-                selectionMode="multiple"
-                onSelectionChange={setLockedFilter}
-              >
-                {lockedOptions.map((locked) => (
-                  <DropdownItem key={locked.uid} className="capitalize">
-                    {locked.name}
                   </DropdownItem>
                 ))}
               </DropdownMenu>
@@ -596,7 +503,7 @@ export const AccountsDataTable = ({ accounts }: Props) => {
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Tổng: {accounts.length} tài khoản
+            Tổng: {news.length} tin tức
           </span>
           <label className="flex items-center text-default-400 text-small">
             Số dòng mỗi trang:
@@ -615,18 +522,18 @@ export const AccountsDataTable = ({ accounts }: Props) => {
       </div>
     );
   }, [
-    accounts,
-    visibleColumns,
+    news,
     onRowsPerPageChange,
     filterSearchValue,
-    filterDobValue,
-    genderFilter,
-    studentStatusFilter,
-    lockedFilter,
+    filterCreatedAtValue,
+    publishedFilter,
+    typeFilter,
+    visibleColumns,
+    router,
     onSearchChange,
-    onSearchDobChange,
+    onSearchCreatedAtChange,
     onClearSearch,
-    onClearSearchDob,
+    onClearSearchCreatedAt,
   ]);
 
   const bottomContent = useMemo(() => {
@@ -667,7 +574,7 @@ export const AccountsDataTable = ({ accounts }: Props) => {
 
   return (
     <Table
-      aria-label="Bảng danh sách tài khoản"
+      aria-label="Bảng danh sách tin tức"
       isHeaderSticky
       bottomContent={pages > 0 && bottomContent}
       bottomContentPlacement="outside"
@@ -692,7 +599,7 @@ export const AccountsDataTable = ({ accounts }: Props) => {
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent={"Không tìm thấy tài khoản"} items={sortedItems}>
+      <TableBody emptyContent={"Không tìm thấy tin tức"} items={sortedItems}>
         {sortedItems.map((item, index) => (
           <TableRow key={item.id}>
             {(columnKey) => {

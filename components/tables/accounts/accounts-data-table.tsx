@@ -165,8 +165,8 @@ export const AccountsDataTable = ({ accounts }: Props) => {
     let filteredAccounts = [...accounts];
 
     if (hasSearchFilter) {
-      filteredAccounts = filteredAccounts.filter((feedback) =>
-        Object.values(feedback).some(
+      filteredAccounts = filteredAccounts.filter((account) =>
+        Object.values(account).some(
           (value) =>
             typeof value === "string" &&
             value.toLowerCase().includes(filterSearchValue.toLowerCase())
@@ -489,10 +489,10 @@ export const AccountsDataTable = ({ accounts }: Props) => {
             variant={"bordered"}
             size={"md"}
             onClick={() => {
-              router.push("/schools/create");
+              router.push("/accounts/create");
             }}
           >
-            Thêm trường học
+            Thêm tài khoản
           </Button>
           <div className="flex justify-end items-center gap-3">
             <Dropdown>
