@@ -57,7 +57,7 @@ const columns = [
   { name: "Loại tin", uid: "type", sortable: true },
   { name: "Tình trạng", uid: "isPublished", sortable: true },
   { name: "Ngày tạo", uid: "createdAt", sortable: true },
-  { name: "Ngày cập nhật", uid: "updatedAt  ", sortable: true },
+  { name: "Ngày cập nhật", uid: "updatedAt", sortable: true },
 ];
 
 const INITIAL_VISIBLE_COLUMNS = [

@@ -31,13 +31,13 @@ type Props = {
 };
 
 export const ChatBox = ({ clientId, senderClientId }: Props) => {
-  const [messages, setMessages] = useState<ChatSessionMessage[]>([]);
+  const [receivedMessages, setMessages] = useState<ChatSessionMessage[]>([]);
   const [isSoundOn, setIsSoundOn] = useState(true);
 
   const { channel } = useChannel(
     `support:${senderClientId}`,
     (message: Ably.Message) => {
-      const history = messages.slice(-50);
+      const history = receivedMessages.slice(-50);
 
       const messageExists = history.some(
         (m) =>
@@ -52,7 +52,7 @@ export const ChatBox = ({ clientId, senderClientId }: Props) => {
           new ChatSessionMessage(
             message.clientId === clientId
               ? "Bạn"
-              : messages.filter((m) => senderClientId === m.clientId)[0]
+              : receivedMessages.filter((m) => senderClientId === m.clientId)[0]
                   ?.name ?? "Người dùng",
             message.data,
             message.clientId === clientId
@@ -65,6 +65,71 @@ export const ChatBox = ({ clientId, senderClientId }: Props) => {
       }
     }
   );
+
+  useEffect(() => {
+    const fetchMessagesAndHistory = async () => {
+      // First, fetch the messages from the server
+      const messages = await getChatSessionMessages(
+        clientId,
+        senderClientId
+      ).then((res) => {
+        if (res.length > 0) {
+          setMessages((prevMessages) => {
+            return [...prevMessages, ...res].sort((a, b) => {
+              return a.createdAt.getTime() - b.createdAt.getTime();
+            });
+          });
+        }
+      });
+
+      // Then, load the history from Ably
+      let history: Ably.PaginatedResult<Ably.Message> | null =
+        await channel.history();
+      do {
+        const newHistoryMessages: ChatSessionMessage[] = [];
+
+        history.items
+          .sort((a, b) => (a.timestamp ?? 0) - (b.timestamp ?? 0))
+          .forEach((message) => {
+            const existingMessage = receivedMessages.find(
+              (m) =>
+                m.message === message.data &&
+                new Date(m.createdAt).getTime() ===
+                  new Date(message.timestamp!).getTime()
+            );
+            if (!existingMessage) {
+              newHistoryMessages.push(
+                new ChatSessionMessage(
+                  message.clientId === clientId
+                    ? "Bạn"
+                    : receivedMessages.filter(
+                        (m) => senderClientId === m.clientId
+                      )[0]?.name ?? "Người dùng",
+                  message.data,
+                  message.clientId === clientId
+                    ? ChatSessionRole.ADMIN
+                    : ChatSessionRole.USER,
+                  new Date(message.timestamp!),
+                  message.clientId === clientId ? clientId : senderClientId
+                )
+              );
+            }
+          });
+
+        if (newHistoryMessages.length > 0) {
+          setMessages((prevMessages) => {
+            return [...prevMessages, ...newHistoryMessages].sort(
+              (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+            );
+          });
+        }
+
+        history = await history.next();
+      } while (history);
+    };
+
+    fetchMessagesAndHistory();
+  }, [senderClientId, clientId]);
 
   let messageEnd = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -83,23 +148,7 @@ export const ChatBox = ({ clientId, senderClientId }: Props) => {
   };
 
   useEffect(() => {
-    async function loadMessages() {
-      await getChatSessionMessages(clientId, senderClientId).then((res) => {
-        if (res.length > 0) {
-          setMessages((prevMessages) => {
-            return [...prevMessages, ...res].sort((a, b) => {
-              return a.createdAt.getTime() - b.createdAt.getTime();
-            });
-          });
-        }
-      });
-    }
-
-    loadMessages();
-  }, [senderClientId, clientId]);
-
-  useEffect(() => {
-    if (messages.length > 0) return;
+    if (receivedMessages.length > 0) return;
 
     const getHistory = async () => {
       let history: Ably.PaginatedResult<Ably.Message> | null =
@@ -110,7 +159,7 @@ export const ChatBox = ({ clientId, senderClientId }: Props) => {
         history.items
           .sort((a, b) => (a.timestamp ?? 0) - (b.timestamp ?? 0))
           .forEach((message) => {
-            const existingMessage = messages.find(
+            const existingMessage = receivedMessages.find(
               (m) =>
                 m.message === message.data &&
                 new Date(m.createdAt).getTime() ===
@@ -121,8 +170,9 @@ export const ChatBox = ({ clientId, senderClientId }: Props) => {
                 new ChatSessionMessage(
                   message.clientId === clientId
                     ? "Bạn"
-                    : messages.filter((m) => senderClientId === m.clientId)[0]
-                        ?.name ?? "Người dùng",
+                    : receivedMessages.filter(
+                        (m) => senderClientId === m.clientId
+                      )[0]?.name ?? "Người dùng",
                   message.data,
                   message.clientId === clientId
                     ? ChatSessionRole.ADMIN
@@ -187,11 +237,11 @@ export const ChatBox = ({ clientId, senderClientId }: Props) => {
     setIsSoundOn(!isSoundOn);
   };
 
-  if (messages.length > 0 && !senderClientId) {
+  if (receivedMessages.length > 0 && !senderClientId) {
     return <div>Người dùng đã rời khỏi cuộc trò chuyện</div>;
   }
 
-  if (messages.length === 0) {
+  if (receivedMessages.length === 0) {
     return <div>Tin nhắn hiện đang trống</div>;
   }
 
@@ -199,8 +249,8 @@ export const ChatBox = ({ clientId, senderClientId }: Props) => {
     <div className="flex h-[500px] flex-col">
       <audio ref={audioRef} src="/notification.wav" preload="auto" />
       <div className="flex-1 overflow-y-auto text-main dark:text-white">
-        {messages.length > 0 ? (
-          messages.map((message, index) => (
+        {receivedMessages.length > 0 ? (
+          receivedMessages.map((message, index) => (
             <div
               key={index}
               className={`my-2 flex gap-3 ${

@@ -110,12 +110,41 @@ const Chat = ({ clientId, chats }: Props) => {
       return { channel, handler };
     });
 
+    chatsState.sort((a, b) => {
+      if (!a.messages || !b.messages) return 0;
+
+      const sortedAMessages = [
+        ...a.messages.sort(
+          (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+        ),
+      ];
+      const sortedBMessages = [
+        ...b.messages.sort(
+          (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+        ),
+      ];
+
+      if (
+        sortedAMessages[0] === undefined ||
+        sortedBMessages[0] === undefined
+      ) {
+        return 0;
+      }
+
+      return (
+        sortedBMessages[0].createdAt.getTime() -
+        sortedAMessages[0].createdAt.getTime()
+      );
+    });
+
     return () => {
       subscriptions.forEach(({ channel, handler }) => {
         channel.unsubscribe(handler);
       });
     };
-  }, [channels, clientId, chatsState]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [channels, clientId]);
 
   if (!client) return null;
 

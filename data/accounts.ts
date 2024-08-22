@@ -129,8 +129,8 @@ export const GetAccounts = async (page: number = 1, pageSize: number = 10) => {
       take: pageSize,
       skip: (page - 1) * pageSize,
       cacheStrategy: {
-        swr: 60,
-        ttl: 300,
+        swr: 5,
+        ttl: 30,
       },
     });
 
@@ -139,5 +139,133 @@ export const GetAccounts = async (page: number = 1, pageSize: number = 10) => {
     console.log("GET ACCOUNTS DATA ERROR", error);
 
     return null;
+  }
+};
+
+export const GetAccountById = async (id: string) => {
+  try {
+    const account = await db.account.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        idCardNumber: true,
+        name: true,
+        email: true,
+        image: true,
+        dob: true,
+        address: true,
+        isLocked: true,
+        emailVerified: true,
+        phoneNumber: true,
+        gender: true,
+        student: {
+          select: {
+            studentCode: true,
+            status: true,
+            cover: true,
+            certificateImg: true,
+            additional: true,
+            degreeType: true,
+            gradeType: true,
+            certificateType: true,
+            gradeScore: true,
+            location: {
+              select: {
+                location: {
+                  select: {
+                    name: true,
+                    address: true,
+                  },
+                },
+              },
+            },
+            program: {
+              select: {
+                program: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
+            school: {
+              select: {
+                country: true,
+                logo: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+      cacheStrategy: {
+        swr: 5,
+        ttl: 30,
+      },
+    });
+
+    return account;
+  } catch (error) {
+    console.log("GET ACCOUNT BY ID DATA ERROR", error);
+
+    return null;
+  }
+};
+
+export const GetSchoolsAuth = async () => {
+  try {
+    const schools = await db.school.findMany({
+      where: {
+        isPublished: true,
+      },
+      select: {
+        id: true,
+        name: true,
+        country: true,
+        logo: true,
+        short: true,
+        background: true,
+        locations: {
+          select: {
+            name: true,
+            images: {
+              select: {
+                url: true,
+              },
+            },
+            isMain: true,
+            cover: true,
+            description: true,
+          },
+        },
+        programs: {
+          where: {
+            isPublished: true,
+          },
+          select: {
+            name: true,
+            images: {
+              select: {
+                url: true,
+              },
+            },
+            cover: true,
+            description: true,
+          },
+        },
+      },
+      cacheStrategy: {
+        swr: 60,
+        ttl: 300,
+      },
+    });
+
+    return schools;
+  } catch (error) {
+    console.log("GET SCHOOLS AUTH ERROR", error);
+
+    return [];
   }
 };

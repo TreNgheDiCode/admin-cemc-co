@@ -69,6 +69,10 @@ export const getChatSessions = async () => {
     orderBy: {
       updatedAt: "desc",
     },
+    cacheStrategy: {
+      swr: 2,
+      ttl: 6,
+    },
   });
 
   return chatSessions.map((chatSession) => {
@@ -108,6 +112,13 @@ export const getChatSessionMessages = async (
           createdAt: true,
         },
       },
+    },
+    orderBy: {
+      updatedAt: "desc",
+    },
+    cacheStrategy: {
+      swr: 2,
+      ttl: 6,
     },
   });
 

@@ -20,7 +20,10 @@ export default function Loading() {
           bạn hoặc tải lại trang.
         </p>
 
-        <button className="px-4 py-2 bg-main dark:bg-main-component hover:bg-main/70 dark:hover:bg-main/70 transition duration-200 rounded-lg text-white dark:text-main-foreground shadow-[0px_2px_0px_0px_#FFFFFF40_inset]">
+        <button
+          onClick={() => window.location.reload()}
+          className="px-4 py-2 bg-main dark:bg-main-component hover:bg-main/70 dark:hover:bg-main/70 transition duration-200 rounded-lg text-white dark:text-main-foreground shadow-[0px_2px_0px_0px_#FFFFFF40_inset] mt-2"
+        >
           Tải lại trang
         </button>
       </Vortex>

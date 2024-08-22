@@ -12,7 +12,7 @@ const NewsPage = ({ searchParams }: Props) => {
   const { page, pageSize } = searchParams;
 
   if (!page || !pageSize) {
-    redirect("/accounts?page=1&pageSize=10");
+    redirect("/news?page=1&pageSize=10");
   }
 
   return (

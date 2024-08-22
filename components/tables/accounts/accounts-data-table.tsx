@@ -42,6 +42,7 @@ import { Chip, ChipProps } from "@nextui-org/chip";
 import { AccountCellAction } from "./account-cell-action";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@nextui-org/input";
+import { IconRefreshDot } from "@tabler/icons-react";
 
 type Props = {
   accounts: AccountLib[];
@@ -485,15 +486,21 @@ export const AccountsDataTable = ({ accounts }: Props) => {
           </Popover>
         </div>
         <div className="flex items-center justify-between">
-          <Button
-            variant={"bordered"}
-            size={"md"}
-            onClick={() => {
-              router.push("/accounts/create");
-            }}
-          >
-            Thêm tài khoản
-          </Button>
+          <div className="flex items-center gap-2.5">
+            <IconRefreshDot
+              className="cursor-pointer hover:animate-spin transition"
+              onClick={() => router.refresh()}
+            />
+            <Button
+              variant={"bordered"}
+              size={"md"}
+              onClick={() => {
+                router.push("/accounts/create");
+              }}
+            >
+              Thêm tài khoản
+            </Button>
+          </div>
           <div className="flex justify-end items-center gap-3">
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
@@ -627,6 +634,7 @@ export const AccountsDataTable = ({ accounts }: Props) => {
     onSearchDobChange,
     onClearSearch,
     onClearSearchDob,
+    router,
   ]);
 
   const bottomContent = useMemo(() => {

@@ -32,11 +32,19 @@ export const sendChatSupport = async (values: ChatSupportFormValues) => {
       });
 
       if (existChatSession) {
-        await db.chatSessionMessage.create({
+        await db.chatSession.update({
+          where: {
+            id: existChatSession.id,
+          },
           data: {
-            message,
-            role: ChatSessionRole.ADMIN,
-            chatSessionId: existChatSession.id,
+            messages: {
+              create: [
+                {
+                  role: ChatSessionRole.ADMIN,
+                  message,
+                },
+              ],
+            },
           },
         });
 

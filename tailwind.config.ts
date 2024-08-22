@@ -15,7 +15,6 @@ const config = {
     "./components/**/*.{ts,tsx}",
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
-    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
     "./node_modules/@nextui-org/theme/dist/components/(button|chip|date-input|date-picker|dropdown|input|pagination|table|ripple|spinner|calendar|popover|menu|divider|checkbox|spacer).js",
     "./node_modules/@tremor/**/*.{js,ts,jsx,tsx}",
   ],
