@@ -30,11 +30,9 @@ export async function POST(req: Request) {
 
     const { message, ...data } = validatedValues.data;
 
-    console.log("DATA", data);
-    console.log("MESSAGE", message);
-
     // Check if user is logged in
     if (data.userId) {
+      console.log("USER ID", data.userId);
       const user = await db.account.findUnique({
         where: {
           id: data.userId,
@@ -183,6 +181,8 @@ export async function POST(req: Request) {
           return NextResponse.json({ success: true }, { status: 200 });
         }
 
+        console.log("EXIST USER", user.id);
+
         await db.chatSession.create({
           data: {
             ...data,
@@ -259,9 +259,20 @@ export async function POST(req: Request) {
 
         return NextResponse.json({ success: true }, { status: 200 });
       } else {
+        const existUser = await db.account.findUnique({
+          where: {
+            id: data.userId,
+          },
+        });
+
+        console.log("EXIST USER", existUser?.id);
+
         await db.chatSession.create({
           data: {
-            ...data,
+            userId: existUser?.id,
+            email: data.email,
+            phone: data.phone,
+            name: data.name,
             clientId: data.clientId,
             messages: {
               create: [

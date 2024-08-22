@@ -75,31 +75,33 @@ const Chat = ({ clientId, chats }: Props) => {
 
     const subscriptions = channels.map((channel) => {
       const handler = (message: Ably.Message) => {
-        const updatedChats = chatsState.map((chat) => {
-          const name = message.name!.split(":")[1];
-          if (chat.clientId === name && message.clientId) {
-            return {
-              ...chat,
-              messages: [
-                ...chat.messages,
-                {
-                  name:
-                    chat.messages[0]?.role === ChatSessionRole.ADMIN
-                      ? "Bạn"
-                      : "Người dùng",
-                  message: message.data,
-                  role:
-                    message.clientId === clientId
-                      ? ChatSessionRole.ADMIN
-                      : ChatSessionRole.USER,
-                  createdAt: new Date(),
-                  clientId: message.clientId,
-                },
-              ],
-            };
-          }
-          return chat;
-        });
+        const updatedChats = chatsState
+          .map((chat) => {
+            const name = message.name!.split(":")[1];
+            if (chat.clientId === name && message.clientId) {
+              return {
+                ...chat,
+                messages: [
+                  ...chat.messages,
+                  {
+                    name:
+                      chat.messages[0]?.role === ChatSessionRole.ADMIN
+                        ? "Bạn"
+                        : "Người dùng",
+                    message: message.data,
+                    role:
+                      message.clientId === clientId
+                        ? ChatSessionRole.ADMIN
+                        : ChatSessionRole.USER,
+                    createdAt: new Date(message.timestamp!),
+                    clientId: message.clientId,
+                  },
+                ],
+              };
+            }
+            return chat;
+          })
+          .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
 
         setChats(updatedChats);
       };

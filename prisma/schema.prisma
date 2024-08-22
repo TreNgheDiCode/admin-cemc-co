@@ -1035,3 +1035,27 @@ model ChatSessionMessage {
 
   @@map("ChatSupportMessage")
 }
+
+model AIResource {
+  id String @id @default(cuid())
+
+  title String
+  image String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  embeddings AIEmbedding[]
+}
+
+model AIEmbedding {
+  id String @id @default(cuid())
+
+  content String
+
+  resource   AIResource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  resourceId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

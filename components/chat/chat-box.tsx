@@ -86,18 +86,11 @@ export const ChatBox = ({ clientId, senderClientId }: Props) => {
     async function loadMessages() {
       await getChatSessionMessages(clientId, senderClientId).then((res) => {
         if (res.length > 0) {
-          setMessages(
-            res.map(
-              (message) =>
-                new ChatSessionMessage(
-                  message.name,
-                  message.message,
-                  message.role,
-                  new Date(message.createdAt),
-                  message.clientId
-                )
-            )
-          );
+          setMessages((prevMessages) => {
+            return [...prevMessages, ...res].sort((a, b) => {
+              return a.createdAt.getTime() - b.createdAt.getTime();
+            });
+          });
         }
       });
     }
