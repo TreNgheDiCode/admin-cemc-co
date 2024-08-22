@@ -6,7 +6,6 @@ import { IconBrandOpenai, IconUser } from "@tabler/icons-react";
 import { StreamableValue } from "ai/rsc";
 import { MemoizedReactMarkdown } from "../markdown";
 import { CodeBlock } from "./code-block";
-import Image from "next/image";
 
 export function UserMessage({ children }: { children: React.ReactNode }) {
   return (

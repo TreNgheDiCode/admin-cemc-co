@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { AccountLib } from "@/types/account";
 
 export const GetAccountByEmail = async (email: string) => {
   try {
@@ -96,6 +97,43 @@ export const GetAccountByEmail = async (email: string) => {
     return user;
   } catch (error) {
     console.log("GET ACCOUNT BY EMAIL ERROR", error);
+    return null;
+  }
+};
+
+export const GetAccounts = async (page: number = 1, pageSize: number = 10) => {
+  try {
+    const accounts: AccountLib[] = await db.account.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        dob: true,
+        gender: true,
+        createdAt: true,
+        emailVerified: true,
+        phoneNumber: true,
+        address: true,
+        idCardNumber: true,
+        isTwoFactorEnabled: true,
+        student: {
+          select: {
+            id: true,
+            studentCode: true,
+            status: true,
+          },
+        },
+        isLocked: true,
+      },
+      take: pageSize,
+      skip: (page - 1) * pageSize,
+    });
+
+    return accounts;
+  } catch (error) {
+    console.log("GET ACCOUNTS DATA ERROR", error);
+
     return null;
   }
 };

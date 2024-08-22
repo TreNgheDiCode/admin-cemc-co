@@ -12,7 +12,7 @@ type Props = {
   description?: string;
 };
 
-export const SchoolNavbar = ({ title, description }: Props) => {
+export const AccountNavbar = ({ title, description }: Props) => {
   const router = useRouter();
 
   return (
@@ -20,6 +20,15 @@ export const SchoolNavbar = ({ title, description }: Props) => {
       <Heading title={title} description={description} />
       <div className="flex items-center gap-4 ml-auto">
         <QuickSearch />
+        <Button
+          variant={"outline"}
+          size={"sm"}
+          onClick={() => {
+            router.push("/accounts/create");
+          }}
+        >
+          Thêm tài khoản
+        </Button>
         <ThemeToggle />
         <UserMenuDropdown />
       </div>

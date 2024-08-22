@@ -92,7 +92,7 @@ const AnalyticsDashboard = ({
                   svg
                   countryCode={code}
                 />
-                <p className="text-tremor-content dark:text-tremor-content-strong">
+                <p className="text-tremor-content dark:text-main-foreground">
                   {number}
                 </p>
               </div>

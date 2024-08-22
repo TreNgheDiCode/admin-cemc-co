@@ -1,14 +1,11 @@
 "use client";
 
 import { AI } from "@/action/chatbot";
-import { FooterText } from "@/app/(openai)/chatbot/footer";
+import { useScrollAnchor } from "@/hooks/use-scroll-anchor";
 import { useUIState } from "ai/rsc";
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 import { ChatList } from "./chat-list";
 import { EmptyScreen } from "./empty-screen";
-import { PromptForm } from "./prompt-form";
-import { useScrollAnchor } from "@/hooks/use-scroll-anchor";
-import { ButtonScrollToBottom } from "./button-scroll-to-bottom";
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;

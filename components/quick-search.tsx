@@ -3,6 +3,8 @@
 import { ClientComponentSearch, search } from "@/action/search";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Search } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -10,15 +12,12 @@ import {
   SearchModal,
   SearchModalBody,
   SearchModalContent,
-  SearchModalFooter,
   SearchModalTrigger,
 } from "./search-modal";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { Form, FormControl, FormField, FormItem } from "./ui/form";
 import { Input } from "./ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
 
 export const QuickSearch = () => {
   const router = useRouter();
