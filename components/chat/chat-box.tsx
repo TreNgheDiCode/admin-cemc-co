@@ -167,14 +167,13 @@ export const ChatBox = ({ clientId, senderClientId }: Props) => {
     form.setValue("clientId", senderClientId);
   }, [senderClientId, form]);
 
-  const { control, handleSubmit } = form;
+  const { control, handleSubmit, setValue } = form;
 
   const message = form.watch("message");
 
   const onSubmit = async (values: ChatSupportFormValues) => {
     sendChatMessage(values.message);
-    console.log(values);
-    form.reset();
+    setValue("message", "");
     await sendChatSupport(values).then((res) => {
       if (res?.error) {
         toast.error(res.error);
@@ -268,6 +267,10 @@ export const ChatBox = ({ clientId, senderClientId }: Props) => {
                       placeholder="Nhập tin nhắn..."
                       className="min-h-12"
                       {...field}
+                      value={message}
+                      onChange={(e) => {
+                        field.onChange(e.target.value);
+                      }}
                     />
                   </FormControl>
                 </FormItem>
