@@ -1,13 +1,13 @@
-import { UIState } from "@/action/chatbot";
+import { ClientMessage } from "@/action/chatbot";
 import { Separator } from "@/components/ui/separator";
-import { useScrollAnchor } from "@/hooks/use-scroll-anchor";
 import { useSession } from "@clerk/nextjs";
 import { IconExclamationCircle } from "@tabler/icons-react";
 import Link from "next/link";
 import Loading from "../loading";
+import { useScrollAnchor } from "@/hooks/use-scroll-anchor";
 
 export interface ChatList {
-  messages: UIState;
+  messages: ClientMessage[];
   isShared: boolean;
 }
 
