@@ -194,7 +194,7 @@ export const CreateSchoolLocation = ({
           </Accordion>
         );
       })}
-      <div className="flex justify-center items-center mt-4">
+      <div className="flex justify-center items-center mt-4 gap-6">
         <button
           disabled={control._formState.isSubmitting}
           type="button"
