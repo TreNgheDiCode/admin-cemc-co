@@ -171,7 +171,7 @@ export const UpdateSchoolProgram = ({ initialData, schoolId }: Props) => {
             </AccordionItem>
           </Accordion>
         ))}
-        <div className="flex justify-center items-center mt-4">
+        <div className="flex justify-center items-center mt-4 gap-6">
           <button
             disabled={control._formState.isSubmitting || loading}
             type="button"

@@ -37,11 +37,11 @@ export const Navbar = ({ title, description }: Props) => {
       {/*  */}
       <div className="z-50 rounded-md fixed px-8 flex h-16 items-center lg:max-w-[calc(100vw-144px)] border-b-2 shadow-md w-[98vw] dark:bg-main-component bg-main-foreground">
         <Heading title={title} description={description} />
-        <IconRefreshDot
-          className="w-6 h-6 text-main dark:text-main-foreground hover:Lanimate-spin"
-          onClick={() => router.refresh()}
-        />
         <div className="items-center gap-4 ml-auto hidden lg:flex">
+          <IconRefreshDot
+            className="size-8 ml-2.5 text-main cursor-pointer dark:text-main-foreground hover:animate-spin"
+            onClick={() => router.refresh()}
+          />
           <QuickSearch />
           {!isRoot && (
             <Button

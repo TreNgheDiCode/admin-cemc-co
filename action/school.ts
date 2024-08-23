@@ -310,6 +310,24 @@ export const UpdateSchoolLocations = async (
       return { error: "Trường học không tồn tại" };
     }
 
+    // Before delete check for exist students in the location
+    const locations = await db.schoolLocation.findMany({
+      where: {
+        schoolId: id,
+      },
+      include: {
+        students: true,
+      },
+    });
+
+    const students = locations.map((location) => location.students);
+
+    const isStudentExist = students.some((student) => student.length > 0);
+
+    if (isStudentExist) {
+      return { error: "Không thể xóa cơ sở đang có học sinh" };
+    }
+
     await db.schoolLocation.deleteMany({
       where: {
         schoolId: id,
@@ -382,6 +400,26 @@ export const UpdateSchoolPrograms = async (
 
     if (!existingSchool) {
       return { error: "Trường học không tồn tại" };
+    }
+
+    // Before delete check for exist students in the program
+    const programs = await db.schoolProgram.findMany({
+      where: {
+        schoolId: id,
+      },
+      include: {
+        studentPrograms: true,
+      },
+    });
+
+    const studentPrograms = programs.map((program) => program.studentPrograms);
+
+    const isStudentExist = studentPrograms.some(
+      (studentProgram) => studentProgram.length > 0
+    );
+
+    if (isStudentExist) {
+      return { error: "Không thể xóa chương trình đào tạo đang có học sinh" };
     }
 
     await db.schoolProgram.deleteMany({
@@ -496,6 +534,24 @@ export const UpdateSchoolScholarships = async (
 
     if (!existingSchool) {
       return { error: "Trường học không tồn tại" };
+    }
+
+    // Before delete check for exist students in the scholarship
+    const scholarships = await db.schoolScholarship.findMany({
+      where: {
+        schoolId: id,
+      },
+      include: {
+        owners: true,
+      },
+    });
+
+    const owners = scholarships.map((scholarship) => scholarship.owners);
+
+    const isStudentExist = owners.some((owner) => owner.length > 0);
+
+    if (isStudentExist) {
+      return { error: "Không thể xóa học bổng đang có học sinh" };
     }
 
     await db.schoolScholarship.deleteMany({
