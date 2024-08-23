@@ -89,9 +89,15 @@ export function NotificationsList() {
                             : "text-main dark:text-main-foreground"
                         )}
                       >
-                        {minutesAgo < 60
-                          ? `${minutesAgo} phút`
-                          : `${Math.floor(minutesAgo / 60)} giờ`}
+                        {monthsAgo > 0
+                          ? `${monthsAgo} tháng trước`
+                          : daysAgo > 0
+                          ? `${daysAgo} ngày trước`
+                          : hoursAgo > 0
+                          ? `${hoursAgo} giờ trước`
+                          : minutesAgo > 0
+                          ? `${minutesAgo} phút trước`
+                          : "Vừa xong"}
                       </span>
                       -
                       <span className="text-xs text-gray-500">

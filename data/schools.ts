@@ -63,8 +63,8 @@ export const GetSchools = async () => {
           country: "asc",
         },
         cacheStrategy: {
-          swr: 300,
-          ttl: 3600,
+          swr: 30,
+          ttl: 100,
         },
       })
       .withAccelerateInfo();
@@ -102,8 +102,8 @@ export const GetSchoolsCard = async () => {
         country: "asc",
       },
       cacheStrategy: {
-        swr: 300,
-        ttl: 3600,
+        swr: 30,
+        ttl: 100,
       },
     });
 
@@ -174,8 +174,8 @@ export const GetSchoolStudents = async (schoolId: string) => {
         },
       },
       cacheStrategy: {
-        swr: 60,
-        ttl: 300,
+        swr: 10,
+        ttl: 30,
       },
     });
 
@@ -194,8 +194,8 @@ export const GetSchoolLocations = async (schoolId: string) => {
         schoolId,
       },
       cacheStrategy: {
-        swr: 60,
-        ttl: 300,
+        swr: 10,
+        ttl: 30,
       },
     });
 
@@ -221,8 +221,8 @@ export const GetSchoolPrograms = async (schoolId: string) => {
         },
       },
       cacheStrategy: {
-        swr: 60,
-        ttl: 300,
+        swr: 10,
+        ttl: 30,
       },
     });
 

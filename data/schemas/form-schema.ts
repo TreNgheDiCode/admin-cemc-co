@@ -50,6 +50,16 @@ export const SchoolLocationSchema = z.object({
   contacts: z.optional(z.array(SchoolLocationContactSchema)),
 });
 
+export const UpdateSchoolLocationSchema = z.object({
+  locations: z.array(SchoolLocationSchema).min(1, {
+    message: "Phải có ít nhất một cơ sở",
+  }),
+});
+
+export type UpdateSchoolLocationFormValues = z.infer<
+  typeof UpdateSchoolLocationSchema
+>;
+
 export const SchoolProgramSchema = z.object({
   name: z.string().min(1, {
     message: "Tên chương trình đào tạo không được để trống",
@@ -62,6 +72,16 @@ export const SchoolProgramSchema = z.object({
   }),
   images: z.optional(z.array(z.string())),
 });
+
+export const UpdateSchoolProgramSchema = z.object({
+  programs: z.array(SchoolProgramSchema).min(1, {
+    message: "Phải có ít nhất một chương trình đào tạo",
+  }),
+});
+
+export type UpdateSchoolProgramFormValues = z.infer<
+  typeof UpdateSchoolProgramSchema
+>;
 
 export const SchoolGallerySchema = z.object({
   name: z.string().min(1, {
@@ -76,6 +96,16 @@ export const SchoolGallerySchema = z.object({
   images: z.optional(z.array(z.string())),
 });
 
+export const UpdateSchoolGallerySchema = z.object({
+  galleries: z.array(SchoolGallerySchema).min(1, {
+    message: "Phải có ít nhất một bộ sưu tập",
+  }),
+});
+
+export type UpdateSchoolGalleryFormValues = z.infer<
+  typeof UpdateSchoolGallerySchema
+>;
+
 export const SchoolScholarshipSchema = z.object({
   name: z.string().min(1, {
     message: "Tên học bổng không được để trống",
@@ -88,6 +118,16 @@ export const SchoolScholarshipSchema = z.object({
   }),
   images: z.optional(z.array(z.string())),
 });
+
+export const UpdateSchoolScholarshipSchema = z.object({
+  scholarships: z.array(SchoolScholarshipSchema).min(1, {
+    message: "Phải có ít nhất một học bổng",
+  }),
+});
+
+export type UpdateSchoolScholarshipFormValues = z.infer<
+  typeof UpdateSchoolScholarshipSchema
+>;
 
 // Create School Form
 export const CreateSchoolSchema = z.object({

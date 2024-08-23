@@ -8,11 +8,5 @@ type Props = {
 export const SchoolGalleries = async ({ schoolId }: Props) => {
   const galleries = await GetSchoolGalleries(schoolId);
 
-  return galleries.length > 0 ? (
-    <SchoolGalleriesList galleries={galleries} schoolId={schoolId} />
-  ) : (
-    <div className="text-main dark:text-main-foreground text-2xl">
-      Danh sách bộ sưu tập trống
-    </div>
-  );
+  return <SchoolGalleriesList galleries={galleries} schoolId={schoolId} />;
 };

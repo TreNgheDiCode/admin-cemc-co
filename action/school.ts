@@ -5,10 +5,15 @@ import {
   CreateSchoolSchema,
   SchoolInformationFormValues,
   SchoolInformationSchema,
+  UpdateSchoolGalleryFormValues,
+  UpdateSchoolLocationFormValues,
+  UpdateSchoolProgramFormValues,
+  UpdateSchoolScholarshipFormValues,
 } from "@/data/schemas/form-schema";
 import { db } from "@/lib/db";
 import admin from "firebase-admin";
 import { SendGeneralNotifications } from "./notification";
+import { UpdateSchoolScholarshipCover } from "@/components/forms/school/update/update-school-scholarship-cover";
 
 // Initialize Firebase Admin SDK
 if (!admin.apps.length) {
@@ -287,5 +292,249 @@ export const UpdateSchoolInformation = async (
     console.log("UPDATE_SCHOOL_INFORMATION_ACTION_ERROR", error);
 
     return { error: "Có lỗi xảy ra khi cập nhật thông tin trường học" };
+  }
+};
+
+export const UpdateSchoolLocations = async (
+  id: string,
+  values: UpdateSchoolLocationFormValues
+) => {
+  try {
+    const existingSchool = await db.school.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingSchool) {
+      return { error: "Trường học không tồn tại" };
+    }
+
+    await db.schoolLocation.deleteMany({
+      where: {
+        schoolId: id,
+      },
+    });
+
+    await Promise.all(
+      values.locations.map(async (location) => {
+        const { address, cover, isMain, name, description } = location;
+
+        const newLocation = await db.schoolLocation.create({
+          data: {
+            address,
+            cover,
+            isMain,
+            name,
+            description,
+            schoolId: id,
+          },
+        });
+
+        if (location.images)
+          await Promise.all(
+            location.images.map((image) => {
+              const newImage = db.schoolLocationImage.create({
+                data: {
+                  url: image,
+                  locationId: newLocation.id,
+                },
+              });
+
+              return newImage;
+            })
+          );
+
+        if (location.contacts)
+          await Promise.all(
+            location.contacts.map((contact) => {
+              const newContact = db.schoolLocationContact.create({
+                data: {
+                  ...contact,
+                  locationId: newLocation.id,
+                },
+              });
+
+              return newContact;
+            })
+          );
+      })
+    );
+
+    return { success: "Cập nhật cơ sở trường học thành công" };
+  } catch (error) {
+    console.log("UPDATE_SCHOOL_LOCATIONS_ACTION_ERROR", error);
+
+    return { error: "Có lỗi xảy ra khi cập nhật cơ sở trường học" };
+  }
+};
+
+export const UpdateSchoolPrograms = async (
+  id: string,
+  values: UpdateSchoolProgramFormValues
+) => {
+  try {
+    const existingSchool = await db.school.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingSchool) {
+      return { error: "Trường học không tồn tại" };
+    }
+
+    await db.schoolProgram.deleteMany({
+      where: {
+        schoolId: id,
+      },
+    });
+
+    await Promise.all(
+      values.programs.map(async (program) => {
+        const { cover, name, description } = program;
+
+        const newProgram = await db.schoolProgram.create({
+          data: {
+            cover,
+            name,
+            description,
+            schoolId: id,
+          },
+        });
+
+        if (program.images)
+          await Promise.all(
+            program.images.map((image) => {
+              const newImage = db.schoolProgramImage.create({
+                data: {
+                  url: image,
+                  programId: newProgram.id,
+                },
+              });
+
+              return newImage;
+            })
+          );
+      })
+    );
+
+    return { success: "Cập nhật chương trình đào tạo thành công" };
+  } catch (error) {
+    console.log("UPDATE_SCHOOL_PROGRAMS_ACTION_ERROR", error);
+
+    return { error: "Có lỗi xảy ra khi cập nhật chương trình đào tạo" };
+  }
+};
+
+export const UpdateSchoolGalleries = async (
+  id: string,
+  values: UpdateSchoolGalleryFormValues
+) => {
+  try {
+    const existingSchool = await db.school.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingSchool) {
+      return { error: "Trường học không tồn tại" };
+    }
+
+    await db.schoolGallery.deleteMany({
+      where: {
+        schoolId: id,
+      },
+    });
+
+    await Promise.all(
+      values.galleries.map(async (gallery) => {
+        const { cover, name, description } = gallery;
+
+        const newGallery = await db.schoolGallery.create({
+          data: {
+            cover,
+            name,
+            description,
+            schoolId: id,
+          },
+        });
+
+        if (gallery.images)
+          await Promise.all(
+            gallery.images.map((image) => {
+              db.schoolGalleryImage.create({
+                data: {
+                  url: image,
+                  galleryId: newGallery.id,
+                },
+              });
+            })
+          );
+      })
+    );
+
+    return { success: "Cập nhật bộ sưu tập thành công" };
+  } catch (error) {
+    console.log("UPDATE_SCHOOL_GALLERIES_ACTION_ERROR", error);
+
+    return { error: "Có lỗi xảy ra khi cập nhật bộ sưu tập" };
+  }
+};
+
+export const UpdateSchoolScholarships = async (
+  id: string,
+  values: UpdateSchoolScholarshipFormValues
+) => {
+  try {
+    const existingSchool = await db.school.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingSchool) {
+      return { error: "Trường học không tồn tại" };
+    }
+
+    await db.schoolScholarship.deleteMany({
+      where: {
+        schoolId: id,
+      },
+    });
+
+    await Promise.all(
+      values.scholarships.map(async (scholarship) => {
+        const { cover, name, description } = scholarship;
+
+        const newScholarship = await db.schoolScholarship.create({
+          data: {
+            cover,
+            name,
+            description,
+            schoolId: id,
+          },
+        });
+
+        if (scholarship.images)
+          await Promise.all(
+            scholarship.images.map((image) => {
+              db.schoolScholarshipImage.create({
+                data: {
+                  url: image,
+                  scholarshipId: newScholarship.id,
+                },
+              });
+            })
+          );
+      })
+    );
+
+    return { success: "Cập nhật học bổng thành công" };
+  } catch (error) {
+    console.log("UPDATE_SCHOOL_SCHOLARSHIPS_ACTION_ERROR", error);
+
+    return { error: "Có lỗi xảy ra khi cập nhật học bổng" };
   }
 };

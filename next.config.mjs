@@ -32,6 +32,9 @@ const nextConfig = {
       },
       { hostname: "utfs.io" },
       { hostname: "api.microlink.io" },
+      { hostname: "res.cloudinary.com" },
+      { hostname: "cmivnedu.com" },
+      { hostname: "piass.ac.rw" },
     ],
   },
   experimental: {

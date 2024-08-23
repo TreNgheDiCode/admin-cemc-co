@@ -8,11 +8,7 @@ type Props = {
 export const SchoolScholarships = async ({ schoolId }: Props) => {
   const scholarships = await GetSchoolScholarships(schoolId);
 
-  return scholarships.length > 0 ? (
+  return (
     <SchoolScholarshipsList scholarships={scholarships} schoolId={schoolId} />
-  ) : (
-    <div className="text-main dark:text-main-foreground text-2xl">
-      Danh sách học bổng trống
-    </div>
   );
 };

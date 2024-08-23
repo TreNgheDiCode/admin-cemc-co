@@ -1,3 +1,5 @@
+"use client";
+
 import { CreateSchoolFormValues } from "@/data/schemas/form-schema";
 import { PreviewSchoolGalleriesList } from "./preview-school-galleries-list";
 
@@ -5,7 +7,7 @@ type Props = {
   galleries: CreateSchoolFormValues["galleries"];
 };
 
-export const PreviewSchoolGalleries = async ({ galleries }: Props) => {
+export const PreviewSchoolGalleries = ({ galleries }: Props) => {
   return galleries && galleries.length > 0 ? (
     <PreviewSchoolGalleriesList galleries={galleries} />
   ) : (

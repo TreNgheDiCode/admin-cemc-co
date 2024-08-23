@@ -1,3 +1,5 @@
+"use client";
+
 import { CreateSchoolFormValues } from "@/data/schemas/form-schema";
 import { PreviewSchoolScholarshipsList } from "./preview-school-scholarships-list";
 
@@ -5,7 +7,7 @@ type Props = {
   scholarships: CreateSchoolFormValues["scholarships"];
 };
 
-export const PreviewSchoolScholarships = async ({ scholarships }: Props) => {
+export const PreviewSchoolScholarships = ({ scholarships }: Props) => {
   return scholarships && scholarships.length > 0 ? (
     <PreviewSchoolScholarshipsList scholarships={scholarships} />
   ) : (

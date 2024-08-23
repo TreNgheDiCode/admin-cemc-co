@@ -1,12 +1,12 @@
 "use client";
 
 import { CreateSchoolFormValues } from "@/data/schemas/form-schema";
+import { PreviewSchoolGalleries } from "./preview-school-galleries";
 import { PreviewSchoolInformation } from "./preview-school-information";
-import { SchoolTabs } from "@/components/schools/school-tabs";
-import { PreviewSchoolTabs } from "./preview-school-tabs";
 import { PreviewSchoolLocations } from "./preview-school-locations";
 import { PreviewSchoolPrograms } from "./preview-school-programs";
-import { PreviewSchoolGalleries } from "./preview-school-galleries";
+import { PreviewSchoolTabs } from "./preview-school-tabs";
+import { PreviewSchoolScholarships } from "./preview-school-scholarships";
 
 type Props = {
   data?: CreateSchoolFormValues;
@@ -62,7 +62,7 @@ export const CreateSchoolPreview = ({ data }: Props) => {
       value: "scholarships",
       content: (
         <div className="w-full overflow-y-scroll relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold dark:text-main-foreground bg-main-foreground dark:bg-main-component">
-          <p>Học bổng</p>
+          <PreviewSchoolScholarships scholarships={data.scholarships} />
         </div>
       ),
     },
