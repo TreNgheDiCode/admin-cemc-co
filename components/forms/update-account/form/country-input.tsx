@@ -1,19 +1,13 @@
 "use client";
 
 import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
-import { Button } from "@/components/ui/button";
-import { UpdateAccountFormValues } from "@/data/schemas/update-account-schema";
 import { Chip } from "@nextui-org/chip";
 import { Country } from "@prisma/client";
-import { IconExclamationMark } from "@tabler/icons-react";
 import Image from "next/image";
 import ReactCountryFlag from "react-country-flag";
-import { FieldErrors, UseFormSetValue, UseFormWatch } from "react-hook-form";
 
 type Props = {
-  setValue: UseFormSetValue<UpdateAccountFormValues>;
-  watch: UseFormWatch<UpdateAccountFormValues>;
-  errors: FieldErrors<UpdateAccountFormValues>;
+  country?: string;
 };
 
 const schoolItems = [
@@ -43,8 +37,7 @@ const schoolItems = [
   },
 ];
 
-export const CountryInput = ({ setValue, watch, errors }: Props) => {
-  const country = watch("country") as Country;
+export const CountryInput = ({ country }: Props) => {
   return (
     <div className="container mx-auto mt-10">
       <h1 className="text-center text-lg font-semibold text-main dark:text-main-foreground md:text-xl lg:text-3xl xl:text-5xl">
@@ -54,12 +47,12 @@ export const CountryInput = ({ setValue, watch, errors }: Props) => {
       <div className="mt-10 grid grid-cols-1 gap-y-6 md:grid-cols-2">
         {schoolItems.map((item) => (
           <SchoolItem
+            country={country ?? ""}
             key={item.name}
             value={item.value}
             name={item.name}
             description={item.description}
             src={item.src}
-            watch={watch}
             flag={item.flag}
           />
         ))}
@@ -73,19 +66,18 @@ type SchoolItem = {
   name: string;
   description: string;
   src: string;
-  watch: UseFormWatch<UpdateAccountFormValues>;
   flag: React.ReactNode | JSX.Element;
+  country: string;
 };
 
 const SchoolItem = ({
   value,
+  country,
   name,
   description,
   src,
-  watch,
   flag,
 }: SchoolItem) => {
-  const country = watch("country") as Country;
   return (
     <CardContainer className="inter-var">
       <CardBody className="group/card relative h-auto w-auto rounded-xl border border-black/[0.1] bg-gray-50 p-6 dark:border-white/[0.2] dark:bg-black dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] sm:w-[30rem]">

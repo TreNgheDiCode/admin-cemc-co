@@ -14,7 +14,7 @@ import { Form } from "@/components/ui/form";
 import { InformationInputs } from "./information-input";
 import { EducationInputs } from "./education-inputs";
 import { AccountInputs } from "./account-inputs";
-import { PreviewRegister } from "../preview-register";
+import { PreviewUpdateAccount } from "../preview-update-account";
 import { toast } from "sonner";
 import { GetAccountById, GetSchoolsAuth } from "@/data/accounts";
 import { updateAccount } from "@/action/account";
@@ -28,7 +28,7 @@ type Props = {
   account: Awaited<ReturnType<typeof GetAccountById>>;
 };
 
-const RegisterForm = ({ account, schools }: Props) => {
+const UpdateAccountForm = ({ account, schools }: Props) => {
   const [previousStep, setPreviousStep] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -199,7 +199,7 @@ const RegisterForm = ({ account, schools }: Props) => {
     <div id="register-form size-full">
       <StepperBar steps={steps} currentStep={currentStep} />
       {currentStep === 0 && (
-        <CountryInput setValue={setValue} watch={watch} errors={errors} />
+        <CountryInput country={account?.student?.school.country} />
       )}
       {currentStep === 1 && (
         <SchoolInput
@@ -234,11 +234,12 @@ const RegisterForm = ({ account, schools }: Props) => {
       </Form>
       {/* Preview data */}
       {data && selectedSchool && currentStep === steps.length - 1 && (
-        <PreviewRegister
+        <PreviewUpdateAccount
           setValue={setValue}
           watch={watch}
           data={data}
           school={selectedSchool}
+          programName={account?.student?.program?.program.name}
         />
       )}
       {!data && currentStep === steps.length - 1 && (
@@ -264,4 +265,4 @@ const RegisterForm = ({ account, schools }: Props) => {
   );
 };
 
-export default RegisterForm;
+export default UpdateAccountForm;

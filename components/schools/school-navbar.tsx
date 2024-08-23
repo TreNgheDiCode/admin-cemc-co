@@ -21,6 +21,15 @@ export const SchoolNavbar = ({ title, description }: Props) => {
       <div className="flex items-center gap-4 ml-auto">
         <QuickSearch />
         <ThemeToggle />
+        <Button
+          variant={"outline"}
+          size={"sm"}
+          onClick={() => {
+            router.push("/schools/create");
+          }}
+        >
+          Thêm trường học
+        </Button>
         <UserMenuDropdown />
       </div>
     </div>

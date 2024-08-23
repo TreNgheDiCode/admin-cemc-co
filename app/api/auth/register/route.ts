@@ -1,5 +1,5 @@
 import { SendAdminNotification } from "@/action/notification";
-import { UpdateAccountSchema } from "@/data/schemas/update-account-schema";
+import { RegisterSchema } from "@/data/schemas/register-schema";
 import { db } from "@/lib/db";
 import { sendVerificationEmail } from "@/lib/email";
 import { generateVerificationToken } from "@/lib/tokens";
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     body.dob = new Date(body.dob);
 
-    const validatedFields = UpdateAccountSchema.safeParse(body);
+    const validatedFields = RegisterSchema.safeParse(body);
 
     if (!validatedFields.success) {
       return NextResponse.json(

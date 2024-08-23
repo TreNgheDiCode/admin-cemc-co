@@ -58,6 +58,18 @@ export function NotificationsList() {
 
             // Calculate minutes ago
             const minutesAgo = differenceInMinutes(now, n.createdAt);
+            let hoursAgo = 0;
+            let daysAgo = 0;
+            let monthsAgo = 0;
+
+            if (minutesAgo >= 60 * 24 * 30) {
+              monthsAgo = Math.floor(minutesAgo / (60 * 24 * 30));
+            } else if (minutesAgo >= 60 * 24) {
+              daysAgo = Math.floor(minutesAgo / (60 * 24));
+            } else if (minutesAgo >= 60) {
+              hoursAgo = Math.floor(minutesAgo / 60);
+            }
+
             return (
               <DropdownMenuItem key={n.id}>
                 <div className="flex items-center justify-between gap-4 w-full">

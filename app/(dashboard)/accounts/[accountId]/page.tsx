@@ -1,12 +1,25 @@
 import { AccountIdNavbar } from "@/components/accounts/id/account-id-navbar";
 import { AccountWrapper } from "@/components/accounts/id/account-wrapper";
-import { GetAccountById, GetSchoolsAuth } from "@/data/accounts";
+import { GetAccountById, GetAccounts, GetSchoolsAuth } from "@/data/accounts";
+import { redirect } from "next/navigation";
 
 type Props = {
   params: {
     accountId: string;
   };
 };
+
+export async function generateStaticParams() {
+  const accounts = await GetAccounts();
+
+  if (!accounts) {
+    redirect("/accounts");
+  }
+
+  return accounts.map((account) => ({
+    accountId: account.id,
+  }));
+}
 
 const AccountIdPage = async ({ params }: Props) => {
   const account = await GetAccountById(params.accountId);

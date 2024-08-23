@@ -86,7 +86,7 @@ const SchoolsSelectWrapper = ({ schools }: Props) => {
               <CloseIcon />
             </motion.button>
             <motion.div
-              layoutId={`card-${active.name}-${id}`}
+              layoutId={`school-${active.name}-${id}`}
               ref={ref}
               className="w-full max-w-[500px]  h-full md:h-fit md:max-h-[90%]  flex flex-col bg-white dark:bg-neutral-900 sm:rounded-3xl overflow-hidden"
             >
@@ -149,7 +149,7 @@ const SchoolsSelectWrapper = ({ schools }: Props) => {
       <ul className="max-w-2xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 items-start gap-4">
         {schools.map((school, index) => (
           <motion.div
-            layoutId={`card-${school.name}-${id}`}
+            layoutId={`school-${school.name}-${id}`}
             key={school.name}
             onClick={() => setActive(school)}
             className="p-4 flex flex-col  hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-xl cursor-pointer"

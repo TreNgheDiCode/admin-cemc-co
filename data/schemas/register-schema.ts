@@ -7,9 +7,8 @@ import {
 } from "@prisma/client";
 import { z } from "zod";
 
-export const UpdateAccountSchema = z
+export const RegisterSchema = z
   .object({
-    isLocked: z.boolean(),
     image: z.optional(z.string()),
     email: z
       .string({
@@ -20,6 +19,20 @@ export const UpdateAccountSchema = z
       })
       .email({
         message: "Vui lòng nhập email hợp lệ",
+      }),
+    password: z
+      .string({
+        required_error: "Vui lòng nhập mật khẩu",
+      })
+      .min(1, {
+        message: "Vui lòng nhập mật khẩu",
+      }),
+    confirmPassword: z
+      .string({
+        required_error: "Vui lòng xác nhận mật khẩu",
+      })
+      .min(1, {
+        message: "Vui lòng xác nhận mật khẩu",
       }),
     name: z
       .string({
@@ -59,6 +72,10 @@ export const UpdateAccountSchema = z
       .min(1, {
         message: "Vui lòng nhập CCCD/CMND",
       }),
+    country: z.enum([Country.AUSTRALIA, Country.CANADA, Country.KOREA], {
+      message: "Vui lòng chọn quốc gia",
+    }),
+
     city: z
       .string({
         required_error: "Vui lòng chọn thành phố",
@@ -87,6 +104,21 @@ export const UpdateAccountSchema = z
       .min(1, {
         message: "Vui lòng nhập địa chỉ",
       }),
+    schoolName: z
+      .string({
+        required_error: "Vui lòng chọn trường học",
+      })
+      .min(1, {
+        message: "Vui lòng chọn trường học",
+      }),
+    programName: z
+      .string({
+        required_error: "Vui lòng chọn chương trình đào tạo",
+      })
+      .min(1, {
+        message: "Vui lòng chọn chương trình đào tạo",
+      }),
+
     degreeType: z.enum([DegreeType.HIGHSCHOOL, DegreeType.UNIVERSITY], {
       required_error: "Vui lòng chọn loại học vấn",
       invalid_type_error: "Loại học vấn không hợp lệ",
@@ -113,6 +145,10 @@ export const UpdateAccountSchema = z
       .min(1, {
         message: "Vui lòng nhập tổng điểm trung bình tích lũy",
       }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Mật khẩu không trùng khớp",
+    path: ["confirmPassword"],
   })
   .refine(
     (data) => {
@@ -146,4 +182,4 @@ export const UpdateAccountSchema = z
     }
   );
 
-export type UpdateAccountFormValues = z.infer<typeof UpdateAccountSchema>;
+export type RegisterFormValues = z.infer<typeof RegisterSchema>;

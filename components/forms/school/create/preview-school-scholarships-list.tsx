@@ -1,5 +1,6 @@
 "use client";
 
+import { CreateSchoolFormValues } from "@/data/schemas/form-schema";
 import { useOutsideClick } from "@/hooks/use-outside-click";
 import { SchoolScholarshipLib } from "@/types/school";
 import { AnimatePresence, motion } from "framer-motion";
@@ -8,13 +9,12 @@ import Image from "next/image";
 import { useEffect, useId, useRef, useState } from "react";
 
 type Props = {
-  scholarships: SchoolScholarshipLib[];
-  schoolId: string;
+  scholarships: CreateSchoolFormValues["scholarships"];
 };
 
-export const SchoolScholarshipsList = ({ scholarships, schoolId }: Props) => {
+export const PreviewSchoolScholarshipsList = ({ scholarships }: Props) => {
   const [active, setActive] = useState<
-    (typeof scholarships)[number] | boolean | null
+    NonNullable<typeof scholarships>[number] | boolean | null
   >(null);
   const id = useId();
   const ref = useRef<HTMLDivElement>(null);
@@ -37,6 +37,8 @@ export const SchoolScholarshipsList = ({ scholarships, schoolId }: Props) => {
   }, [active]);
 
   useOutsideClick(ref, () => setActive(null));
+
+  if (!scholarships || scholarships.length === 0) return null;
 
   return (
     <>
@@ -86,18 +88,6 @@ export const SchoolScholarshipsList = ({ scholarships, schoolId }: Props) => {
                       {active.description}
                     </motion.p>
                   </div>
-
-                  <motion.a
-                    layout
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    href={`/schools/${schoolId}/scholarship/${active.id}`}
-                    target="_blank"
-                    className="px-4 py-3 text-sm rounded-full font-bold bg-main hover:dark:bg-main-component/70 dark:bg-main-component hover:bg-main/70 text-white dark:text-main-foreground whitespace-nowrap"
-                  >
-                    Xem chi tiết
-                  </motion.a>
                 </div>
                 <div className="pt-4 relative px-4">
                   <motion.div
@@ -142,22 +132,10 @@ export const SchoolScholarshipsList = ({ scholarships, schoolId }: Props) => {
                 >
                   {scholarship.name}
                 </motion.h3>
-                <motion.div
-                  layoutId={`_count.owners-${scholarship._count.owners}-${scholarship.id}`}
-                  className="text-neutral-600 dark:text-neutral-400 text-base"
-                >
-                  {scholarship._count.owners} học sinh
-                </motion.div>
               </div>
             </div>
           </motion.div>
         ))}
-        <div className="size-full flex items-center justify-center">
-          <button className="shadow-[0_0_0_3px_#7d1f1f_inset] dark:shadow-[0_0_0_3px_#f5f5f5_inset] px-6 py-2 bg-transparent border border-main dark:border-main-foreground dark:text-main-foreground text-main rounded-2xl font-bold transform hover:-translate-y-1 transition duration-400 text-xl flex items-center">
-            <PlusCircle className="size-6 mr-2" />
-            Thêm học bổng
-          </button>
-        </div>
       </ul>
     </>
   );

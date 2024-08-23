@@ -4,6 +4,9 @@ import { CreateSchoolFormValues } from "@/data/schemas/form-schema";
 import { PreviewSchoolInformation } from "./preview-school-information";
 import { SchoolTabs } from "@/components/schools/school-tabs";
 import { PreviewSchoolTabs } from "./preview-school-tabs";
+import { PreviewSchoolLocations } from "./preview-school-locations";
+import { PreviewSchoolPrograms } from "./preview-school-programs";
+import { PreviewSchoolGalleries } from "./preview-school-galleries";
 
 type Props = {
   data?: CreateSchoolFormValues;
@@ -31,8 +34,8 @@ export const CreateSchoolPreview = ({ data }: Props) => {
       title: "Cơ sở",
       value: "locations",
       content: (
-        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold text-white bg-gradient-to-br from-purple-700 to-violet-900">
-          <p>Cơ sở</p>
+        <div className="w-full overflow-y-scroll relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold dark:text-main-foreground bg-main-foreground dark:bg-main-component">
+          <PreviewSchoolLocations locations={data.locations} />
         </div>
       ),
     },
@@ -40,8 +43,8 @@ export const CreateSchoolPreview = ({ data }: Props) => {
       title: "Chương trình đào tạo",
       value: "programs",
       content: (
-        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold text-white bg-gradient-to-br from-purple-700 to-violet-900">
-          <p>Chương trình đào tạo</p>
+        <div className="w-full overflow-y-scroll relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold dark:text-main-foreground bg-main-foreground dark:bg-main-component">
+          <PreviewSchoolPrograms programs={data.programs} />
         </div>
       ),
     },
@@ -49,8 +52,8 @@ export const CreateSchoolPreview = ({ data }: Props) => {
       title: "Bộ sưu tập",
       value: "galleries",
       content: (
-        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold text-white bg-gradient-to-br from-purple-700 to-violet-900">
-          <p>Bộ sưu tập</p>
+        <div className="w-full overflow-y-scroll relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold dark:text-main-foreground bg-main-foreground dark:bg-main-component">
+          <PreviewSchoolGalleries galleries={data.galleries} />
         </div>
       ),
     },
@@ -58,7 +61,7 @@ export const CreateSchoolPreview = ({ data }: Props) => {
       title: "Học bổng",
       value: "scholarships",
       content: (
-        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold text-white bg-gradient-to-br from-purple-700 to-violet-900">
+        <div className="w-full overflow-y-scroll relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold dark:text-main-foreground bg-main-foreground dark:bg-main-component">
           <p>Học bổng</p>
         </div>
       ),

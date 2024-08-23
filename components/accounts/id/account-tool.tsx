@@ -1,12 +1,12 @@
 "use client";
 
 import {
+  lockAccount,
   sendEmailVerfication,
   sendPasswordReset,
-  updateAccount,
+  unlockAccount,
 } from "@/action/account";
-import RegisterForm from "@/components/forms/register/form/register-form";
-import { GetAccountById, GetSchoolsAuth } from "@/data/accounts";
+import { GetAccountById } from "@/data/accounts";
 import { Button } from "@nextui-org/button";
 import { Card, CardBody, CardFooter, CardHeader } from "@nextui-org/card";
 import { Divider } from "@nextui-org/divider";
@@ -71,7 +71,7 @@ export const AccountTool = ({
 
     setIsLoading(true);
 
-    await updateAccount(account.id, { isLocked: true })
+    await lockAccount(account.id)
       .then((res) => {
         if (res.success) {
           toast.success(res.success);
@@ -90,7 +90,7 @@ export const AccountTool = ({
 
     setIsLoading(true);
 
-    await updateAccount(account.id, { isLocked: false })
+    await unlockAccount(account.id)
       .then((res) => {
         if (res.success) {
           toast.success(res.success);
@@ -159,7 +159,7 @@ export const AccountTool = ({
           <Button
             isLoading={isLoading}
             isDisabled={isLoading}
-            onPress={() => {}}
+            onPress={onLockAccount}
             color="danger"
             variant="shadow"
             startContent={<Lock className="size-4" />}
@@ -171,7 +171,7 @@ export const AccountTool = ({
           <Button
             isLoading={isLoading}
             isDisabled={isLoading}
-            onPress={() => {}}
+            onPress={onUnlockAccount}
             color="success"
             variant="shadow"
             startContent={<Lock className="size-4" />}

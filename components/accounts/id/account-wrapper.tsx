@@ -4,9 +4,9 @@ import { GetAccountById, GetSchoolsAuth } from "@/data/accounts";
 import { AccountInformation } from "./account-information";
 import { AccountTool } from "./account-tool";
 import { useState } from "react";
-import RegisterForm from "@/components/forms/register/form/register-form";
 import { Button } from "@/components/ui/button";
 import { IconArrowLeftBar } from "@tabler/icons-react";
+import UpdateAccountForm from "@/components/forms/update-account/form/update-account-form";
 
 type Props = {
   account: Awaited<ReturnType<typeof GetAccountById>>;
@@ -30,7 +30,7 @@ export const AccountWrapper = ({ schools, account }: Props) => {
             <IconArrowLeftBar />
             <span>Quay lại</span>
           </Button>
-          <RegisterForm account={account} schools={schools} />
+          <UpdateAccountForm account={account} schools={schools} />
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-[1fr,300px] gap-4">

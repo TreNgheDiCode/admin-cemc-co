@@ -18,8 +18,9 @@ import { toast } from "sonner";
 type Props = {
   data: UpdateAccountFormValues;
   school: Awaited<ReturnType<typeof GetSchoolsAuth>>[0];
-  setValue: UseFormSetValue<UpdateAccountFormValues>;
   watch: UseFormWatch<UpdateAccountFormValues>;
+  setValue: UseFormSetValue<UpdateAccountFormValues>;
+  programName?: string;
 };
 
 const countryCodeMap: Record<Country, string> = {
@@ -28,7 +29,13 @@ const countryCodeMap: Record<Country, string> = {
   [Country.KOREA]: "KR",
 };
 
-export const PreviewRegister = ({ data, school, setValue, watch }: Props) => {
+export const PreviewUpdateAccount = ({
+  data,
+  programName,
+  school,
+  watch,
+  setValue,
+}: Props) => {
   const [disabled, setDisabled] = useState(false);
   const [uploading, setUploading] = useState(false);
   const { edgestore } = useEdgeStore();
@@ -201,7 +208,7 @@ export const PreviewRegister = ({ data, school, setValue, watch }: Props) => {
                   Trường: {school.name}
                 </li>
                 <li className="text-sm text-main dark:text-main-foreground md:text-base lg:text-lg">
-                  Chương trình đào tạo: {data.programName}
+                  Chương trình đào tạo: {programName}
                 </li>
                 <li className="text-sm text-main dark:text-main-foreground md:text-base lg:text-lg">
                   Trình độ: {data.degreeType}
