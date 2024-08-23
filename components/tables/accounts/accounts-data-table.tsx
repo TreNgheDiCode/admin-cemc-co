@@ -491,15 +491,6 @@ export const AccountsDataTable = ({ accounts }: Props) => {
               className="cursor-pointer hover:animate-spin transition"
               onClick={() => router.refresh()}
             />
-            <Button
-              variant={"bordered"}
-              size={"md"}
-              onClick={() => {
-                router.push("/accounts/create");
-              }}
-            >
-              Thêm tài khoản
-            </Button>
           </div>
           <div className="flex justify-end items-center gap-3">
             <Dropdown>

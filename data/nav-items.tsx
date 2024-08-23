@@ -47,13 +47,6 @@ export const navItems: NavItemProps[] = [
           <IconUsersGroup className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
         ),
       },
-      {
-        label: "Thêm tài khoản",
-        href: "/accounts/create",
-        icon: (
-          <IconUserPlus className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
-        ),
-      },
     ],
   },
   {
@@ -91,13 +84,6 @@ export const navItems: NavItemProps[] = [
         href: "/news",
         icon: (
           <IconListDetails className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
-        ),
-      },
-      {
-        label: "Thêm tin tức",
-        href: "/news/create",
-        icon: (
-          <IconNewSection className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
         ),
       },
     ],

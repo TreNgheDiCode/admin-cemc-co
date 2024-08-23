@@ -16,7 +16,7 @@ export type ClientComponentSearch = {
   name: string;
   chipValue: StudentStatus | Country | NewsType | string;
   type: "schools" | "accounts" | "news";
-  schoolSub?: "program" | "location" | "scholarship" | "gallery";
+  schoolSub?: "programs" | "locations" | "scholarships" | "galleries";
   schoolSubId?: string;
 };
 
@@ -226,7 +226,7 @@ export const search = async (searchQuery: SearchQuery) => {
           name: program.name,
           chipValue: program.school.name,
           type: "schools",
-          schoolSub: "program",
+          schoolSub: "programs",
           schoolSubId: program.id,
         });
       });
@@ -238,7 +238,7 @@ export const search = async (searchQuery: SearchQuery) => {
           name: location.name,
           chipValue: location.school.name,
           type: "schools",
-          schoolSub: "location",
+          schoolSub: "locations",
           schoolSubId: location.id,
         });
       });
@@ -250,7 +250,7 @@ export const search = async (searchQuery: SearchQuery) => {
           name: scholarship.name,
           chipValue: scholarship.school.name,
           type: "schools",
-          schoolSub: "scholarship",
+          schoolSub: "scholarships",
           schoolSubId: scholarship.id,
         });
       });
@@ -262,7 +262,7 @@ export const search = async (searchQuery: SearchQuery) => {
           name: gallery.name,
           chipValue: gallery.school.name,
           type: "schools",
-          schoolSub: "gallery",
+          schoolSub: "galleries",
           schoolSubId: gallery.id,
         });
       });
